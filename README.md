@@ -5,3 +5,5 @@
 element-plus
 
 tailwindcss/unocss
+
+iconify
