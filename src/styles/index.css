@@ -3,3 +3,7 @@
 @theme {
   --spacing: 1px;
 }
+
+:root {
+  --editor-border: #334151;
+}
