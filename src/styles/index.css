@@ -5,5 +5,16 @@
 }
 
 :root {
-  --editor-border: #334151;
+  color-scheme: dark;
+  --editor-bg: #0b1220;
+  --editor-header: #111a2b;
+  --editor-panel: #121c2d;
+  --editor-canvas: #0e1625;
+  --editor-control: #18243a;
+  --editor-control-hover: #223250;
+  --editor-border: #2a3953;
+  --editor-border-hover: #4c6fa8;
+  --editor-text: #e5edf8;
+  --editor-text-muted: #94a3b8;
+  --editor-accent: #5b8def;
 }
