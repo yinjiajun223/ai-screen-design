@@ -7,7 +7,6 @@
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@iconify/vue'
 import { ElMessage } from 'element-plus'
 
 const toolbarItems = [

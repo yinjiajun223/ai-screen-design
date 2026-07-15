@@ -15,7 +15,6 @@
 
 <script lang="ts" setup>
 import { useEditorStore } from '@/stores/editor'
-import { Icon } from '@iconify/vue'
 import { ElMessage } from 'element-plus'
 import { storeToRefs } from 'pinia'
 

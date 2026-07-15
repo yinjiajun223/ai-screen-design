@@ -8,7 +8,9 @@
     <main class="h-[calc(100vh-56px)] flex">
       <!--  物料区 -->
       <Transition name="panel">
-        <aside v-show="panelVisible.material" class="editor-panel w-260 border-r border-(--editor-border)">物料</aside>
+        <aside v-show="panelVisible.material" class="editor-panel w-260 border-r border-(--editor-border)">
+          <MaterialPanel />
+        </aside>
       </Transition>
       <!--  图层   -->
       <Transition name="panel">
@@ -27,8 +29,7 @@
 <script lang="ts" setup>
 import { useEditorStore } from '@/stores/editor'
 import { storeToRefs } from 'pinia'
-import ToolbarLeft from './toolbarLeft.vue'
-import ToolbarRight from './toolbarRight.vue'
+import { ToolbarLeft, ToolbarRight, MaterialPanel } from './index'
 
 const { panelVisible } = storeToRefs(useEditorStore())
 
@@ -54,8 +55,8 @@ defineOptions({
 }
 
 .editor-panel {
+  display: flex;
   flex-shrink: 0;
-  padding: 16px;
   color: var(--editor-text-muted);
   background: var(--editor-panel);
 }
