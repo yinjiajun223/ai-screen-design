@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './global.scss';
 
 @theme {
   --spacing: 1px;
@@ -6,15 +7,15 @@
 
 :root {
   color-scheme: dark;
-  --editor-bg: #0b1220;
-  --editor-header: #111a2b;
-  --editor-panel: #121c2d;
-  --editor-canvas: #0e1625;
-  --editor-control: #18243a;
-  --editor-control-hover: #223250;
-  --editor-border: #2a3953;
-  --editor-border-hover: #4c6fa8;
-  --editor-text: #e5edf8;
-  --editor-text-muted: #94a3b8;
-  --editor-accent: #5b8def;
+  --editor-bg: #0a0a0c;
+  --editor-header: #111114;
+  --editor-panel: #121216;
+  --editor-canvas: #070708;
+  --editor-control: #1a1a20;
+  --editor-control-hover: #24242c;
+  --editor-border: #2d2d35;
+  --editor-border-hover: #744056;
+  --editor-text: #f4f4f5;
+  --editor-text-muted: #a1a1aa;
+  --editor-accent: #e04486;
 }

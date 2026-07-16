@@ -8,19 +8,20 @@
     <main class="h-[calc(100vh-56px)] flex">
       <!--  物料区 -->
       <Transition name="panel">
-        <aside v-show="panelVisible.material" class="editor-panel w-260 border-r border-(--editor-border)">
-          <MaterialPanel />
-        </aside>
+        <MaterialPanel
+          v-show="panelVisible.material"
+          class="editor-panel w-260 border-r border-(--editor-border)"
+        />
       </Transition>
       <!--  图层   -->
       <Transition name="panel">
-        <aside v-show="panelVisible.layer" class="editor-panel w-156 border-r border-(--editor-border)">图层</aside>
+        <LayerPanel v-show="panelVisible.layer" class="editor-panel w-156 border-r border-(--editor-border)" />
       </Transition>
       <!--  画布   -->
       <div class="canvas flex-1">画布</div>
       <!--  属性   -->
       <Transition name="panel">
-        <aside v-show="panelVisible.property" class="editor-panel w-260 border-l border-(--editor-border)">属性</aside>
+        <div v-show="panelVisible.property" class="editor-panel w-260 border-l border-(--editor-border)">属性</div>
       </Transition>
     </main>
   </div>
@@ -30,6 +31,7 @@
 import { useEditorStore } from '@/stores/editor'
 import { storeToRefs } from 'pinia'
 import { ToolbarLeft, ToolbarRight, MaterialPanel } from './index'
+import LayerPanel from './panel/layer.vue'
 
 const { panelVisible } = storeToRefs(useEditorStore())
 
@@ -55,7 +57,6 @@ defineOptions({
 }
 
 .editor-panel {
-  display: flex;
   flex-shrink: 0;
   color: var(--editor-text-muted);
   background: var(--editor-panel);

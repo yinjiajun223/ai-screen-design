@@ -100,9 +100,9 @@ defineOptions({
   }
 
   &.active {
-    color: #fff;
-    background: var(--editor-accent);
-    border-color: var(--editor-accent);
+    color: var(--editor-accent);
+    background: color-mix(in srgb, var(--editor-accent) 12%, var(--editor-control));
+    border-color: var(--editor-border-hover);
   }
 }
 </style>
