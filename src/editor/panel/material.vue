@@ -1,27 +1,28 @@
 <template>
   <div class="material-panel flex">
     <div class="nav w-50">
-      <div class="active">
-        <span><Icon icon="mdi:chart-bar" width="16" /></span>
-        <span>图表</span>
-      </div>
-      <div>
-        <span><Icon icon="mdi:form" width="16" /></span>
-        <span>表单</span>
+      <div :class="{ active: activeGroup === item.key }" v-for="item in groups" :key="item.name" @click="activeGroup = item.key">
+        <span><Icon :icon="item.icon" width="16" /></span>
+        <span>{{ item.name }}</span>
       </div>
     </div>
     <div class="material-list flex-1">
-      <MaterialItem v-for="index in 29" :key="index" />
+      <MaterialItem v-for="material in currentMaterials" :key="material.name" :material="material" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { getGroups, getMerialsByGroup } from '@/materials'
 import MaterialItem from './components/material-item.vue'
 
 defineOptions({
   name: 'MaterialPanel',
 })
+const activeGroup = ref('info')
+
+const groups = getGroups()
+const currentMaterials = computed(() => getMerialsByGroup(activeGroup.value))
 </script>
 
 <style scoped lang="scss">

@@ -1,7 +1,7 @@
 <template>
   <div class="material-item">
-    <div class="title">柱状图</div>
-    <div class="icon"><Icon icon="noto-v1:bar-chart" /></div>
+    <div class="title">{{ material.name }}</div>
+    <div class="icon"><Icon :icon="material.icon" /></div>
   </div>
 </template>
 
@@ -9,6 +9,8 @@
 defineOptions({
   name: 'MaterialItem',
 })
+
+defineProps(['material'])
 </script>
 
 <style scoped lang="scss">
@@ -44,8 +46,8 @@ defineOptions({
     border-radius: 6px;
 
     > svg {
-      width: 24px;
-      height: 24px;
+      width: 48px;
+      height: 48px;
     }
   }
 
