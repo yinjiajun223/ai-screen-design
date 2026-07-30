@@ -1,11 +1,11 @@
-interface layout {
+export interface layout {
   x: number
   y: number
   width: number
   height: number
 }
 
-interface MaterialSchema {
+export interface MaterialSchema {
   id: string
   type: string
   name: string

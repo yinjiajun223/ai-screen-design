@@ -1,6 +1,8 @@
-import type { MaterialsDefinition } from './types'
+import type { MaterialsDefinition } from '../types'
+import TextMetrial from './compoent.vue'
 
 // 物料元数据
+// text => TextMaterial
 const textMaterials: MaterialsDefinition = {
   name: '文本',
   icon: 'solar:text-bold',
@@ -15,7 +17,7 @@ const textMaterials: MaterialsDefinition = {
       height: 50,
     },
     style: {
-      color: '#000000',
+      color: '#fff',
     },
     props: {
       content: 'Hello World',
@@ -24,5 +26,5 @@ const textMaterials: MaterialsDefinition = {
 }
 
 export const install = (register) => {
-  register(textMaterials)
+  register(textMaterials, TextMetrial)
 }

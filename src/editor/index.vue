@@ -1,5 +1,5 @@
 <template>
-  <div class="editor h-screen">
+  <div class="editor h-screen select-none">
     <header class="editor-header h-56 border-b border-(--editor-border) flex items-center px-20">
       <ToolbarLeft class="w-300" />
       <div class="editor-title flex-1 text-center">AI Screen Design</div>
@@ -8,17 +8,14 @@
     <main class="h-[calc(100vh-56px)] flex">
       <!--  物料区 -->
       <Transition name="panel">
-        <MaterialPanel
-          v-show="panelVisible.material"
-          class="editor-panel w-260 border-r border-(--editor-border)"
-        />
+        <MaterialPanel v-show="panelVisible.material" class="editor-panel w-260 border-r border-(--editor-border)" />
       </Transition>
       <!--  图层   -->
       <Transition name="panel">
         <LayerPanel v-show="panelVisible.layer" class="editor-panel w-156 border-r border-(--editor-border)" />
       </Transition>
       <!--  画布   -->
-      <div class="canvas flex-1">画布</div>
+      <CanvasRoot class="canvas flex-1" />
       <!--  属性   -->
       <Transition name="panel">
         <div v-show="panelVisible.property" class="editor-panel w-260 border-l border-(--editor-border)">属性</div>
@@ -32,6 +29,7 @@ import { useEditorStore } from '@/stores/editor'
 import { storeToRefs } from 'pinia'
 import { ToolbarLeft, ToolbarRight, MaterialPanel } from './index'
 import LayerPanel from './panel/layer.vue'
+import CanvasRoot from './canvas/index.vue'
 
 const { panelVisible } = storeToRefs(useEditorStore())
 
