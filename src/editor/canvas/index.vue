@@ -1,17 +1,37 @@
 <template>
-  <div class="canvas-root">
-    <div ref="stage" class="canvas-stage" @dragover.prevent @drop="onDrop" @mousedown.self="onClearSelected">
+  <div class="canvas-root" ref="canvasRoot">
+    <SketchRuler
+      v-model:scale="scale"
+      :palette="palette"
+      :width="rectWidth"
+      :height="rectHeight"
+      :canvas-width="canvasWidth"
+      :canvas-height="canvasHeight"
+      :thick="20"
+      :lines="lines"
+      @zoomchange="onZoomChange"
+    >
       <div
-        class="canvas-node"
-        v-for="node in nodes"
-        :key="node.id"
-        :style="getNodeStyle(node)"
-        :data-node-id="node.id"
-        @mousedown="onSelect(node, $event)"
+        ref="stage"
+        class="canvas-stage"
+        :style="canvasStyle"
+        @dragover.prevent
+        @drop="onDrop"
+        @mousedown.self="onClearSelected"
       >
-        <component :is="getMaterialComponent(node.type)" :schema="node"></component>
+        <div
+          class="canvas-node"
+          v-for="node in nodes"
+          :key="node.id"
+          :style="getNodeStyle(node)"
+          :data-node-id="node.id"
+          @mousedown="onSelect(node, $event)"
+        >
+          <component :is="getMaterialComponent(node.type)" :schema="node"></component>
+        </div>
       </div>
-    </div>
+    </SketchRuler>
+
     <!-- Selecto mounted的时候  stageRef可能还没挂载 -->
     <Selecto
       v-if="stageRef"
@@ -40,19 +60,77 @@
 import { createNode, getMaterialComponent } from '@/materials/index'
 import Moveable, { type OnDrag, type OnDragGroup, type OnResize, type OnResizeGroup } from 'vue3-moveable'
 import Selecto from 'vue3-selecto'
+import SketchRuler, { type PaletteType } from 'vue3-sketch-ruler'
 import { useEditorStore } from '@/stores/editor'
 import { storeToRefs } from 'pinia'
+import 'vue3-sketch-ruler/lib/style.css'
+import { debounce } from '@/utils'
 
 defineOptions({
   name: 'CanvasRoot',
 })
 
+const rootStyle = getComputedStyle(document.documentElement)
+const themeColor = (name: string) => rootStyle.getPropertyValue(name).trim()
+const palette = {
+  bgColor: themeColor('--editor-panel'),
+  longfgColor: themeColor('--editor-border'),
+  fontColor: themeColor('--editor-text-muted'),
+  fontShadowColor: themeColor('--editor-accent'),
+  shadowColor: themeColor('--editor-control-hover'),
+  lineColor: themeColor('--editor-accent'),
+  lineType: 'solid',
+  lockLineColor: themeColor('--editor-border-hover'),
+  borderColor: themeColor('--editor-border'),
+  hoverBg: themeColor('--editor-control-hover'),
+  hoverColor: themeColor('--editor-text'),
+} satisfies PaletteType
+const lines = ref({
+  h: [],
+  v: [],
+})
+const scale = ref(1)
+const rectWidth = ref(1000)
+const rectHeight = ref(800)
+const canvasRootRef = useTemplateRef('canvasRoot')
 const stageRef = useTemplateRef('stage')
 const moveableRef = useTemplateRef('moveable')
 const selectedTarget = shallowRef<HTMLElement>()
 const editorStore = useEditorStore()
 const { nodes } = storeToRefs(editorStore)
 const vm = getCurrentInstance()
+
+const canvasWidth = ref(1920)
+const canvasHeight = ref(1080)
+const canvasStyle = computed(() => ({
+  width: canvasWidth.value + 'px',
+  height: canvasHeight.value + 'px',
+}))
+
+const onRootResize = debounce((rect) => {
+  rectWidth.value = rect.width
+  rectHeight.value = rect.height
+}, 300)
+
+onMounted(() => {
+  const { width, height } = canvasRootRef.value.getBoundingClientRect()
+  rectWidth.value = width
+  rectHeight.value = height
+
+  // 监听dom尺寸变化
+  const ob = new ResizeObserver((entries) => {
+    const entrie = entries[0]
+    const rect = entrie.contentRect
+    onRootResize(rect)
+  })
+
+  ob.observe(canvasRootRef.value)
+
+  // TIPS: 生命周期里是可以套生命周期的
+  onUnmounted(() => {
+    ob.disconnect()
+  })
+})
 
 const onDrop = (e: DragEvent) => {
   const data = e.dataTransfer.getData('schema')
@@ -130,14 +208,15 @@ const onSelectEnd = (e) => {
   const ids = e.selected.map((el: HTMLElement) => el.getAttribute('data-node-id'))
   editorStore.selectedNodes(ids)
 }
+
+const onZoomChange = () => {
+  moveableRef.value.updateRect()
+}
 </script>
 
 <style lang="scss" scoped>
 .canvas-root {
   .canvas-stage {
-    width: 900px;
-    height: 600px;
-    margin: 100px;
     background: var(--editor-control);
     position: relative;
     border: 1px solid var(--editor-border);
