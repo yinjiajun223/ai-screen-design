@@ -21,9 +21,9 @@
       >
         <div
           class="canvas-node"
-          v-for="node in nodes"
+          v-for="(node, index) in nodes"
           :key="node.id"
-          :style="getNodeStyle(node)"
+          :style="getNodeStyle(node, index)"
           :data-node-id="node.id"
           @mousedown="onSelect(node, $event)"
         >
@@ -95,10 +95,9 @@ const rectHeight = ref(800)
 const canvasRootRef = useTemplateRef('canvasRoot')
 const stageRef = useTemplateRef('stage')
 const moveableRef = useTemplateRef('moveable')
-const selectedTarget = shallowRef<HTMLElement>()
+const selectedTarget = shallowRef<HTMLElement[]>()
 const editorStore = useEditorStore()
-const { nodes } = storeToRefs(editorStore)
-const vm = getCurrentInstance()
+const { nodes, selectedNodeIds } = storeToRefs(editorStore)
 
 const canvasWidth = ref(1920)
 const canvasHeight = ref(1080)
@@ -141,25 +140,21 @@ const onDrop = (e: DragEvent) => {
 
   editorStore.addNode(node)
   editorStore.selectNode(node.id)
-  // 这个时候node还没虚渲染出来 node.id拿不到
-  nextTick(() => {
-    selectedTarget.value = vm.proxy.$el.querySelector(`[data-node-id='${node.id}']`)
-  })
 }
 
 /**
  * 移动: 改 css left top
  * 尺寸: 改 css width height
  */
-const getNodeStyle = (node) => ({
+const getNodeStyle = (node, index) => ({
   width: node.layout.width + 'px',
   height: node.layout.height + 'px',
   left: node.layout.x + 'px',
   top: node.layout.y + 'px',
+  zIndex: index + 1,
 })
 
 const onSelect = (node, e: MouseEvent) => {
-  selectedTarget.value = e.currentTarget as HTMLElement
   editorStore.selectNode(node.id)
 
   nextTick(() => {
@@ -200,11 +195,9 @@ const onResizeGroup = (e: OnResizeGroup) => {
 
 const onClearSelected = () => {
   editorStore.clearSelected()
-  selectedTarget.value = null
 }
 
 const onSelectEnd = (e) => {
-  selectedTarget.value = e.selected
   const ids = e.selected.map((el: HTMLElement) => el.getAttribute('data-node-id'))
   editorStore.selectedNodes(ids)
 }
@@ -212,6 +205,15 @@ const onSelectEnd = (e) => {
 const onZoomChange = () => {
   moveableRef.value.updateRect()
 }
+
+// 监听已选的id列表
+watch(
+  selectedNodeIds,
+  (ids) => {
+    selectedTarget.value = ids.map((id) => stageRef.value.querySelector(`[data-node-id='${id}']`) as HTMLElement)
+  },
+  { deep: true, flush: 'post' },
+)
 </script>
 
 <style lang="scss" scoped>
