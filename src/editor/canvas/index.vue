@@ -1,6 +1,6 @@
 <template>
   <div class="canvas-root">
-    <div class="canvas-stage" @dragover.prevent @drop="onDrop" @mousedown.self="onClearSelected">
+    <div ref="stage" class="canvas-stage" @dragover.prevent @drop="onDrop" @mousedown.self="onClearSelected">
       <div
         class="canvas-node"
         v-for="node in nodes"
@@ -12,6 +12,16 @@
         <component :is="getMaterialComponent(node.type)" :schema="node"></component>
       </div>
     </div>
+    <!-- Selecto mounted的时候  stageRef可能还没挂载 -->
+    <Selecto
+      v-if="stageRef"
+      :container="stageRef"
+      :drag-container="stageRef"
+      :selectable-targets="['.canvas-node']"
+      @select-end="onSelectEnd"
+      :select-from-inside="false"
+      toggle-continue-select="shift"
+    ></Selecto>
     <Moveable
       ref="moveable"
       :target="selectedTarget"
@@ -20,13 +30,16 @@
       :origin="false"
       @drag="onDrag"
       @resize="onResize"
+      @drag-group="onDragGroup"
+      @resize-group="onResizeGroup"
     ></Moveable>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { createNode, getMaterialComponent } from '@/materials/index'
-import Moveable, { type OnDrag, type OnResize } from 'vue3-moveable'
+import Moveable, { type OnDrag, type OnDragGroup, type OnResize, type OnResizeGroup } from 'vue3-moveable'
+import Selecto from 'vue3-selecto'
 import { useEditorStore } from '@/stores/editor'
 import { storeToRefs } from 'pinia'
 
@@ -34,10 +47,11 @@ defineOptions({
   name: 'CanvasRoot',
 })
 
+const stageRef = useTemplateRef('stage')
 const moveableRef = useTemplateRef('moveable')
 const selectedTarget = shallowRef<HTMLElement>()
 const editorStore = useEditorStore()
-const { nodes, selectedNode } = storeToRefs(editorStore)
+const { nodes } = storeToRefs(editorStore)
 const vm = getCurrentInstance()
 
 const onDrop = (e: DragEvent) => {
@@ -75,24 +89,46 @@ const onSelect = (node, e: MouseEvent) => {
   })
 }
 
+// 拿到当前选中节点的dom元素, 通过dom元素的data-node-id属性找到对应的node
+const getNodeByTarget = (target: HTMLElement) => {
+  const id = target.getAttribute('data-node-id')
+  return editorStore.findNodeById(id)
+}
+
 const onDrag = (e: OnDrag) => {
-  selectedTarget.value.style.left = e.left + 'px'
-  selectedTarget.value.style.top = e.top + 'px'
-  selectedNode.value.layout.x = e.left
-  selectedNode.value.layout.y = e.top
+  e.target.style.left = e.left + 'px'
+  e.target.style.top = e.top + 'px'
+  const node = getNodeByTarget(e.target as HTMLElement)
+  node.layout.x = e.left
+  node.layout.y = e.top
+}
+
+const onDragGroup = (e: OnDragGroup) => {
+  e.events.forEach(onDrag)
 }
 
 const onResize = (e: OnResize) => {
-  selectedTarget.value.style.width = e.width + 'px'
-  selectedTarget.value.style.height = e.height + 'px'
-  selectedNode.value.layout.width = e.width
-  selectedNode.value.layout.height = e.height
+  e.target.style.width = e.width + 'px'
+  e.target.style.height = e.height + 'px'
+  const node = getNodeByTarget(e.target as HTMLElement)
+  node.layout.width = e.width
+  node.layout.height = e.height
   onDrag(e.drag)
+}
+
+const onResizeGroup = (e: OnResizeGroup) => {
+  e.events.forEach(onResize)
 }
 
 const onClearSelected = () => {
   editorStore.clearSelected()
   selectedTarget.value = null
+}
+
+const onSelectEnd = (e) => {
+  selectedTarget.value = e.selected
+  const ids = e.selected.map((el: HTMLElement) => el.getAttribute('data-node-id'))
+  editorStore.selectedNodes(ids)
 }
 </script>
 
@@ -101,8 +137,8 @@ const onClearSelected = () => {
   .canvas-stage {
     width: 900px;
     height: 600px;
-    background: var(--editor-control);
     margin: 100px;
+    background: var(--editor-control);
     position: relative;
     border: 1px solid var(--editor-border);
     box-shadow: 0 12px 32px rgb(0 0 0 / 28%);
