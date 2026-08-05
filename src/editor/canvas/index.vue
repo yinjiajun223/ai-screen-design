@@ -97,13 +97,14 @@ const stageRef = useTemplateRef('stage')
 const moveableRef = useTemplateRef('moveable')
 const selectedTarget = shallowRef<HTMLElement[]>()
 const editorStore = useEditorStore()
-const { nodes, selectedNodeIds } = storeToRefs(editorStore)
+const { nodes, selectedNodeIds, canvas } = storeToRefs(editorStore)
 
-const canvasWidth = ref(1920)
-const canvasHeight = ref(1080)
+const canvasWidth = toRef(canvas.value, 'width')
+const canvasHeight = toRef(canvas.value, 'height')
 const canvasStyle = computed(() => ({
   width: canvasWidth.value + 'px',
   height: canvasHeight.value + 'px',
+  background: canvas.value.backgroundColor,
 }))
 
 const onRootResize = debounce((rect) => {
@@ -219,7 +220,7 @@ watch(
 <style lang="scss" scoped>
 .canvas-root {
   .canvas-stage {
-    background: var(--editor-control);
+    // background: var(--editor-control);
     position: relative;
     border: 1px solid var(--editor-border);
     box-shadow: 0 12px 32px rgb(0 0 0 / 28%);

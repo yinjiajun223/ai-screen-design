@@ -1,4 +1,4 @@
-import type { MaterialsDefinition } from '../types'
+import type { MaterialsDefinition } from '../../schema/materials'
 
 const chartMaterials: MaterialsDefinition = {
   name: '柱状图',

@@ -1,5 +1,5 @@
 import type { Component } from 'vue'
-import type { MaterialsDefinition } from './types'
+import type { MaterialsDefinition } from '../schema/materials'
 
 const materials: MaterialsDefinition[] = []
 

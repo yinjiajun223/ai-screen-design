@@ -1,4 +1,4 @@
-import type { MaterialsDefinition } from '../types'
+import type { MaterialsDefinition } from '../../schema/materials'
 import TextMetrial from './compoent.vue'
 
 // 物料元数据
