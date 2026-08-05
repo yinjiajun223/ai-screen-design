@@ -18,7 +18,9 @@
       <CanvasRoot class="canvas flex-1" />
       <!--  属性   -->
       <Transition name="panel">
-        <div v-show="panelVisible.property" class="editor-panel w-260 border-l border-(--editor-border)">属性</div>
+        <PropertyPanel v-show="panelVisible.property" class="editor-panel w-260 border-l border-(--editor-border)">
+          属性
+        </PropertyPanel>
       </Transition>
     </main>
   </div>
@@ -28,8 +30,9 @@
 import { useEditorStore } from '@/stores/editor'
 import { storeToRefs } from 'pinia'
 import { ToolbarLeft, ToolbarRight, MaterialPanel } from './index'
-import LayerPanel from './panel/layer.vue'
+import LayerPanel from './panels/layer.vue'
 import CanvasRoot from './canvas/index.vue'
+import PropertyPanel from './panels/property.vue'
 
 const { panelVisible } = storeToRefs(useEditorStore())
 

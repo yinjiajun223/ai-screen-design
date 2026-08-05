@@ -63,8 +63,9 @@ import Selecto from 'vue3-selecto'
 import SketchRuler, { type PaletteType } from 'vue3-sketch-ruler'
 import { useEditorStore } from '@/stores/editor'
 import { storeToRefs } from 'pinia'
-import 'vue3-sketch-ruler/lib/style.css'
 import { debounce } from '@/utils'
+
+import 'vue3-sketch-ruler/lib/style.css'
 
 defineOptions({
   name: 'CanvasRoot',
