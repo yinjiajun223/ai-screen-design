@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import { getGroups, getMerialsByGroup } from '@/materials'
-import MaterialItem from './components/material-item.vue'
+import MaterialItem from './components/MaterialItem.vue'
 
 defineOptions({
   name: 'MaterialPanel',

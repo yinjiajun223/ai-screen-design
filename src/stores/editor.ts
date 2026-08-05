@@ -20,8 +20,8 @@ export const useEditorStore = defineStore('editor', () => {
 
   const canvas = toRef(page.value, 'canvas') // 当前画布数据
   const nodes = toRef(page.value, 'nodes') // 当前画布节点数据
-  const selectedNodeId = computed(() => (selectedNodeIds.value.length === 1 ? selectedNode.value[0].id : null)) // 当前选中节点id
-  const selectedNodeIds = ref([]) // 当前选中节点ids
+  const selectedNodeIds = ref<string[]>([]) // 当前选中节点ids
+  const selectedNodeId = computed(() => (selectedNodeIds.value.length === 1 ? selectedNodeIds.value[0] : null)) // 当前选中节点id
   const selectedNode = computed(() => nodes.value.find((node) => node.id === selectedNodeId.value)) // 当前选中节点
   const addNode = (node: MaterialSchema) => nodes.value.push(node)
   const selectNode = (id: string) => (selectedNodeIds.value = [id])

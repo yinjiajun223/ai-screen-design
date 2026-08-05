@@ -14,9 +14,17 @@ export interface MaterialSchema {
   props: Record<string, any>
 }
 
+interface SetterSchema {
+  type: string
+  label: string
+  key: string
+  [key: string]: any
+}
+
 export interface MaterialsDefinition {
   name: string
   icon: string
   group: string
   schema?: Omit<MaterialSchema, 'id'>
+  setters?: SetterSchema[]
 }

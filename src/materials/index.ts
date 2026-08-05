@@ -8,14 +8,20 @@ const groups = [
   { name: '信息', icon: 'material-symbols:info-outline', key: 'info' },
 ]
 const componentMap = new Map()
+const settersMap = new Map()
 
 export const register = (material: MaterialsDefinition, component: Component) => {
   materials.push(material)
   componentMap.set(material.schema.type, component)
+
+  if (material.setters) {
+    settersMap.set(material.schema.type, material.setters)
+  }
 }
 export const getMerialsByGroup = (group: string) => materials.filter((material) => material.group === group)
 export const getGroups = () => groups
 export const getMaterialComponent = (type: string) => componentMap.get(type)
+export const getMaterialSetters = (type: string) => settersMap.get(type)
 export const createNode = (node) => ({ ...node, id: crypto.randomUUID() })
 
 // 注册所有的物料

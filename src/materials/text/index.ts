@@ -5,8 +5,12 @@ import TextMetrial from './compoent.vue'
 // text => TextMaterial
 const textMaterials: MaterialsDefinition = {
   name: '文本',
-  icon: 'solar:text-bold',
   group: 'info',
+  icon: 'solar:text-bold',
+  setters: [
+    { type: 'input', label: '文本内容', key: 'props.content' },
+    { type: 'color', label: '颜色', key: 'style.color' },
+  ],
   schema: {
     type: 'text',
     name: '文本',

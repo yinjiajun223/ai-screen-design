@@ -18,9 +18,7 @@
       <CanvasRoot class="canvas flex-1" />
       <!--  属性   -->
       <Transition name="panel">
-        <PropertyPanel v-show="panelVisible.property" class="editor-panel w-260 border-l border-(--editor-border)">
-          属性
-        </PropertyPanel>
+        <PropertyPanel v-show="panelVisible.property" class="editor-panel w-360 border-l border-(--editor-border)" />
       </Transition>
     </main>
   </div>
