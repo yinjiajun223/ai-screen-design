@@ -35,6 +35,7 @@
     <!-- Selecto mounted的时候  stageRef可能还没挂载 -->
     <Selecto
       v-if="stageRef"
+      class-name="canvas-selecto"
       :container="stageRef"
       :drag-container="stageRef"
       :selectable-targets="['.canvas-node']"
@@ -220,6 +221,15 @@ watch(
 
 <style lang="scss" scoped>
 .canvas-root {
+  :deep(.moveable-control-box) {
+    --moveable-color: var(--editor-accent);
+  }
+
+  :deep(.canvas-selecto) {
+    border-color: var(--editor-accent);
+    background: color-mix(in srgb, var(--editor-accent) 16%, transparent);
+  }
+
   .canvas-stage {
     // background: var(--editor-control);
     position: relative;

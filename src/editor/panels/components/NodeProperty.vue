@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="node-property">
     <el-collapse>
       <el-collapse-item title="布局属性">
         <FormCreate :setters="layoutSetters" :formData="selectedNode" />
@@ -34,4 +34,73 @@ const layoutSetters = [
 ]
 </script>
 
-<style></style>
+<style scoped lang="scss">
+.node-property {
+  padding: 12px;
+
+  :deep(.el-collapse) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 0;
+  }
+
+  :deep(.el-collapse-item) {
+    overflow: hidden;
+    border: 1px solid var(--editor-border);
+    border-radius: 8px;
+    background: var(--editor-panel);
+  }
+
+  :deep(.el-collapse-item__header) {
+    height: 44px;
+    padding: 0 14px;
+    border: 0;
+    background: var(--editor-control);
+    color: var(--editor-text);
+    font-size: 14px;
+    font-weight: 500;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
+
+    &::before {
+      width: 3px;
+      height: 14px;
+      margin-right: 10px;
+      border-radius: 999px;
+      background: var(--editor-border-hover);
+      content: '';
+      transition: background-color 0.2s ease;
+    }
+
+    &:hover {
+      background: var(--editor-control-hover);
+    }
+
+    &.is-active {
+      color: var(--editor-accent);
+      background: color-mix(in srgb, var(--editor-accent) 8%, var(--editor-control));
+
+      &::before {
+        background: var(--editor-accent);
+      }
+    }
+  }
+
+  :deep(.el-collapse-item__arrow) {
+    color: var(--editor-text-muted);
+    font-size: 14px;
+  }
+
+  :deep(.el-collapse-item__wrap) {
+    border: 0;
+    background: var(--editor-panel);
+  }
+
+  :deep(.el-collapse-item__content) {
+    padding-bottom: 0;
+    color: var(--editor-text-muted);
+  }
+}
+</style>

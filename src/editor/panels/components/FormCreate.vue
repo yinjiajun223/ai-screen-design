@@ -26,7 +26,7 @@ defineProps(['setters', 'formData'])
 
 const componentMap = {
   input: ElInput,
-  number: ElInputNumber,
+  number: (props, { slots }) => h(ElInputNumber, { precision: 0, ...props, slots }),
   color: ElColorPicker,
 }
 </script>

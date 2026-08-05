@@ -19,3 +19,27 @@
   --editor-text-muted: #a1a1aa;
   --editor-accent: #e04486;
 }
+
+html.dark {
+  --el-color-primary: var(--editor-accent);
+  --el-color-primary-light-3: color-mix(in srgb, var(--editor-accent) 70%, var(--editor-panel));
+  --el-color-primary-light-5: color-mix(in srgb, var(--editor-accent) 50%, var(--editor-panel));
+  --el-color-primary-light-7: color-mix(in srgb, var(--editor-accent) 30%, var(--editor-panel));
+  --el-color-primary-light-8: color-mix(in srgb, var(--editor-accent) 20%, var(--editor-panel));
+  --el-color-primary-light-9: color-mix(in srgb, var(--editor-accent) 10%, var(--editor-panel));
+  --el-color-primary-dark-2: color-mix(in srgb, var(--editor-accent) 80%, var(--editor-text));
+  --el-bg-color-page: var(--editor-bg);
+  --el-bg-color: var(--editor-panel);
+  --el-bg-color-overlay: var(--editor-control);
+  --el-text-color-primary: var(--editor-text);
+  --el-text-color-regular: var(--editor-text-muted);
+  --el-text-color-secondary: var(--editor-text-muted);
+  --el-border-color: var(--editor-border);
+  --el-border-color-light: var(--editor-border);
+  --el-border-color-lighter: var(--editor-border);
+  --el-border-color-hover: var(--editor-border-hover);
+  --el-fill-color: var(--editor-control-hover);
+  --el-fill-color-light: var(--editor-control-hover);
+  --el-fill-color-lighter: var(--editor-control);
+  --el-fill-color-blank: var(--editor-control);
+}
