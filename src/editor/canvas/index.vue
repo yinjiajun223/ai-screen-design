@@ -59,6 +59,7 @@
       :target="selectedTarget"
       :resizable="true"
       :draggable="true"
+      :use-resize-observer="true"
       :origin="false"
       @drag="onDrag"
       @resize="onResize"
