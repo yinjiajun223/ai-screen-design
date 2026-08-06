@@ -8,7 +8,7 @@ export interface layout {
 export interface MaterialSchema {
   id: string
   type: string
-  locked: boolean
+  locked?: boolean
   name: string
   layout: layout
   style?: Record<string, any> // 样式并不是所有节点都需要的 比如echarts

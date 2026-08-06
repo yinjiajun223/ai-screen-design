@@ -71,80 +71,31 @@
 
 <script lang="ts" setup>
 import { createNode, getMaterialComponent } from '@/materials/index'
-import Moveable, { type OnDrag, type OnDragGroup, type OnResize, type OnResizeGroup } from 'vue3-moveable'
+import Moveable from 'vue3-moveable'
 import Selecto from 'vue3-selecto'
-import SketchRuler, { type PaletteType } from 'vue3-sketch-ruler'
-import { useEditorStore } from '@/stores/editor'
-import { storeToRefs } from 'pinia'
-import { debounce } from '@/utils'
+import SketchRuler from 'vue3-sketch-ruler'
 
 import 'vue3-sketch-ruler/lib/style.css'
+import { useCanvasRuler } from './composables/useCanvasRuler'
+import { useEditorStore } from '@/stores/editor'
+import { storeToRefs } from 'pinia'
+import { useMoveable } from './composables/useMoveable'
+import { useSelection } from './composables/useSelection'
 
 defineOptions({
   name: 'CanvasRoot',
 })
 
-const rootStyle = getComputedStyle(document.documentElement)
-const themeColor = (name: string) => rootStyle.getPropertyValue(name).trim()
-const palette = {
-  bgColor: themeColor('--editor-panel'),
-  longfgColor: themeColor('--editor-border'),
-  fontColor: themeColor('--editor-text-muted'),
-  fontShadowColor: themeColor('--editor-accent'),
-  shadowColor: themeColor('--editor-control-hover'),
-  lineColor: themeColor('--editor-accent'),
-  lineType: 'solid',
-  lockLineColor: themeColor('--editor-border-hover'),
-  borderColor: themeColor('--editor-border'),
-  hoverBg: themeColor('--editor-control-hover'),
-  hoverColor: themeColor('--editor-text'),
-} satisfies PaletteType
-const lines = ref({
-  h: [],
-  v: [],
-})
-const scale = ref(1)
-const rectWidth = ref(1000)
-const rectHeight = ref(800)
+const editorStore = useEditorStore()
+const { nodes } = storeToRefs(editorStore)
 const canvasRootRef = useTemplateRef('canvasRoot')
 const stageRef = useTemplateRef('stage')
 const moveableRef = useTemplateRef('moveable')
-const selectedTarget = shallowRef<HTMLElement[]>()
-const editorStore = useEditorStore()
-const { nodes, selectedNodeIds, canvas } = storeToRefs(editorStore)
 
-const canvasWidth = toRef(canvas.value, 'width')
-const canvasHeight = toRef(canvas.value, 'height')
-const canvasStyle = computed(() => ({
-  width: canvasWidth.value + 'px',
-  height: canvasHeight.value + 'px',
-  background: canvas.value.backgroundColor,
-}))
-
-const onRootResize = debounce((rect) => {
-  rectWidth.value = rect.width
-  rectHeight.value = rect.height
-}, 300)
-
-onMounted(() => {
-  const { width, height } = canvasRootRef.value.getBoundingClientRect()
-  rectWidth.value = width
-  rectHeight.value = height
-
-  // 监听dom尺寸变化
-  const ob = new ResizeObserver((entries) => {
-    const entrie = entries[0]
-    const rect = entrie.contentRect
-    onRootResize(rect)
-  })
-
-  ob.observe(canvasRootRef.value)
-
-  // TIPS: 生命周期里是可以套生命周期的
-  onUnmounted(() => {
-    ob.disconnect()
-  })
-})
+// prettier-ignore
+const { scale, rectWidth, rectHeight, canvasWidth, canvasHeight, canvasStyle, palette, lines, onZoomChange } = useCanvasRuler({ moveableRef, canvasRootRef })
+const { onDrag, onDragGroup, onResize, onResizeGroup } = useMoveable()
+const { onSelect, onSelectEnd, onClearSelected, selectedTarget } = useSelection({ stageRef, moveableRef })
 
 const onDrop = (e: DragEvent) => {
   const data = e.dataTransfer.getData('schema')
@@ -169,58 +120,6 @@ const getNodeStyle = (node, index) => ({
   zIndex: index + 1,
 })
 
-const onSelect = (node, e: MouseEvent) => {
-  editorStore.selectNode(node.id)
-
-  nextTick(() => {
-    moveableRef.value.dragStart(e)
-  })
-}
-
-// 拿到当前选中节点的dom元素, 通过dom元素的data-node-id属性找到对应的node
-const getNodeByTarget = (target: HTMLElement) => {
-  const id = target.getAttribute('data-node-id')
-  return editorStore.findNodeById(id)
-}
-
-const onDrag = (e: OnDrag) => {
-  e.target.style.left = e.left + 'px'
-  e.target.style.top = e.top + 'px'
-  const node = getNodeByTarget(e.target as HTMLElement)
-  node.layout.x = e.left
-  node.layout.y = e.top
-}
-
-const onDragGroup = (e: OnDragGroup) => {
-  e.events.forEach(onDrag)
-}
-
-const onResize = (e: OnResize) => {
-  e.target.style.width = e.width + 'px'
-  e.target.style.height = e.height + 'px'
-  const node = getNodeByTarget(e.target as HTMLElement)
-  node.layout.width = e.width
-  node.layout.height = e.height
-  onDrag(e.drag)
-}
-
-const onResizeGroup = (e: OnResizeGroup) => {
-  e.events.forEach(onResize)
-}
-
-const onClearSelected = () => {
-  editorStore.clearSelected()
-}
-
-const onSelectEnd = (e) => {
-  const ids = e.selected.map((el: HTMLElement) => el.getAttribute('data-node-id'))
-  editorStore.selectedNodes(ids)
-}
-
-const onZoomChange = () => {
-  moveableRef.value.updateRect()
-}
-
 const commandMap = {
   copy: () => editorStore.copyNode(editorStore.selectedNode),
   remove: () => editorStore.removeNode(editorStore.selectedNode),
@@ -234,17 +133,6 @@ const commandMap = {
 const onCommand = (commad: string) => {
   commandMap[commad]?.()
 }
-
-// 监听已选的id列表
-watch(
-  selectedNodeIds,
-  (ids) => {
-    selectedTarget.value = ids.map(
-      (id) => stageRef.value.querySelector(`[data-node-id='${id}']:not([data-node-locked='true'])`) as HTMLElement,
-    )
-  },
-  { deep: true, flush: 'post' },
-)
 </script>
 
 <style lang="scss" scoped>
