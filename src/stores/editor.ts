@@ -29,6 +29,40 @@ export const useEditorStore = defineStore('editor', () => {
   const findNodeById = (id: string) => nodes.value.find((node) => node.id === id)
   const clearSelected = () => (selectedNodeIds.value = [])
 
+  /**
+   * 右键菜单针对节点的处理
+   * copyNode: 复制节点
+   * removeNode: 删除节点
+   * moveTop: 节点置顶
+   * moveBottom: 节点置底
+   * toggleLock: 锁定/解锁节点
+   */
+  const copyNode = (node: MaterialSchema) => {
+    const newNode = JSON.parse(JSON.stringify(node))
+    newNode.id = crypto.randomUUID()
+    newNode.layout.x += 20
+    newNode.layout.y += 20
+    addNode(newNode)
+    selectNode(newNode.id)
+  }
+  const removeNode = (node: MaterialSchema) => {
+    nodes.value = nodes.value.filter((n) => n.id !== node.id)
+    selectedNodeIds.value = selectedNodeIds.value.filter((id) => id !== node.id)
+  }
+  const moveTop = (node: MaterialSchema) => {
+    const index = nodes.value.findIndex((i) => i.id === node.id)
+    nodes.value.splice(index, 1)
+    nodes.value.unshift(node)
+  }
+  const moveBottom = (node: MaterialSchema) => {
+    const index = nodes.value.findIndex((i) => i.id === node.id)
+    nodes.value.splice(index, 1)
+    nodes.value.push(node)
+  }
+  const toggleLock = (node: MaterialSchema) => {
+    node.locked = !node.locked
+  }
+
   return {
     panelVisible,
     nodes,
@@ -41,5 +75,10 @@ export const useEditorStore = defineStore('editor', () => {
     addNode,
     selectNode,
     clearSelected,
+    copyNode,
+    removeNode,
+    moveTop,
+    moveBottom,
+    toggleLock,
   }
 })

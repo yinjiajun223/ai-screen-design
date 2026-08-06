@@ -19,16 +19,27 @@
         @drop="onDrop"
         @mousedown.self="onClearSelected"
       >
-        <div
-          class="canvas-node"
-          v-for="(node, index) in nodes"
-          :key="node.id"
-          :style="getNodeStyle(node, index)"
-          :data-node-id="node.id"
-          @mousedown="onSelect(node, $event)"
-        >
-          <component :is="getMaterialComponent(node.type)" :schema="node"></component>
-        </div>
+        <el-dropdown v-for="(node, index) in nodes" :key="node.id" trigger="contextmenu" @command="onCommand">
+          <div
+            class="canvas-node"
+            :style="getNodeStyle(node, index)"
+            :data-node-id="node.id"
+            :data-node-locked="node.locked"
+            @mousedown="onSelect(node, $event)"
+          >
+            <component :is="getMaterialComponent(node.type)" :schema="node"></component>
+          </div>
+
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="copy">复制</el-dropdown-item>
+              <el-dropdown-item command="remove">移除</el-dropdown-item>
+              <el-dropdown-item command="moveTop">置顶</el-dropdown-item>
+              <el-dropdown-item command="moveBottom">置底</el-dropdown-item>
+              <el-dropdown-item command="toggleLock"> {{ node.locked ? '解锁' : '锁定' }} </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </div>
     </SketchRuler>
 
@@ -209,11 +220,27 @@ const onZoomChange = () => {
   moveableRef.value.updateRect()
 }
 
+const commandMap = {
+  copy: () => editorStore.copyNode(editorStore.selectedNode),
+  remove: () => editorStore.removeNode(editorStore.selectedNode),
+  moveBottom: () => editorStore.moveTop(editorStore.selectedNode),
+  moveTop: () => editorStore.moveBottom(editorStore.selectedNode),
+  toggleLock: () => {
+    editorStore.toggleLock(editorStore.selectedNode)
+    selectedTarget.value = null
+  },
+}
+const onCommand = (commad: string) => {
+  commandMap[commad]?.()
+}
+
 // 监听已选的id列表
 watch(
   selectedNodeIds,
   (ids) => {
-    selectedTarget.value = ids.map((id) => stageRef.value.querySelector(`[data-node-id='${id}']`) as HTMLElement)
+    selectedTarget.value = ids.map(
+      (id) => stageRef.value.querySelector(`[data-node-id='${id}']:not([data-node-locked='true'])`) as HTMLElement,
+    )
   },
   { deep: true, flush: 'post' },
 )
