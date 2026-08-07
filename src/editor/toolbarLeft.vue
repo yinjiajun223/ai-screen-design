@@ -5,6 +5,7 @@
       :key="item.icon"
       :class="{ active: item.panel && panelVisible[item.panel] }"
       :title="item.title"
+      :disabled="item.disabled?.value"
       type="button"
       @click="item.onClick"
     >
@@ -14,12 +15,13 @@
 </template>
 
 <script lang="ts" setup>
+import { useUndoRedo } from '@/composables/useUndoRedo'
 import { useEditorStore } from '@/stores/editor'
-import { ElMessage } from 'element-plus'
 import { storeToRefs } from 'pinia'
 
 const editorStore = useEditorStore()
 const { panelVisible } = storeToRefs(editorStore)
+const { undo, redo, canUndo, canRedo } = useUndoRedo()
 
 type PanelName = keyof typeof panelVisible.value
 
@@ -27,6 +29,7 @@ interface ToolbarItem {
   title: string
   icon: string
   panel?: PanelName
+  disabled?: ComputedRef<boolean>
   onClick: () => void
 }
 
@@ -52,12 +55,14 @@ const toolbarItems: ToolbarItem[] = [
   {
     title: '撤销',
     icon: 'material-symbols-light:undo',
-    onClick: () => ElMessage.info('撤销功能待实现'),
+    disabled: computed(() => !canUndo.value),
+    onClick: () => undo(),
   },
   {
     title: '重做',
     icon: 'material-symbols-light:redo-rounded',
-    onClick: () => ElMessage.info('重做功能待实现'),
+    disabled: computed(() => !canRedo.value),
+    onClick: () => redo(),
   },
 ]
 
@@ -103,6 +108,11 @@ defineOptions({
     color: var(--editor-accent);
     background: color-mix(in srgb, var(--editor-accent) 12%, var(--editor-control));
     border-color: var(--editor-border-hover);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }
 </style>

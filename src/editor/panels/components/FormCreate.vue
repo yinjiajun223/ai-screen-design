@@ -7,7 +7,7 @@
           <component
             :is="componentMap[setter.type]"
             :modelValue="getValue(formData, setter.key)"
-            @update:modelValue="setValue(formData, setter.key, $event)"
+            @update:modelValue="applyChange(formData, setter.key, $event)"
           />
         </el-form-item>
       </el-col>
@@ -16,13 +16,16 @@
 </template>
 
 <script lang="ts" setup>
-import { getValue, setValue } from '@/utils'
+import { useUndoRedo } from '@/composables/useUndoRedo'
+import { getValue } from '@/utils'
 import { ElColorPicker, ElInput, ElInputNumber } from 'element-plus'
 defineOptions({
   name: 'FormCreate',
 })
 
 defineProps(['setters', 'formData'])
+
+const { applyChange } = useUndoRedo()
 
 const componentMap = {
   input: ElInput,
