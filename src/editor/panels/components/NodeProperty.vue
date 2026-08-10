@@ -24,7 +24,7 @@ defineOptions({
 const editorStore = useEditorStore()
 const { selectedNode } = storeToRefs(editorStore)
 
-const setters = getMaterialSetters(selectedNode.value.type)
+const setters = computed(() => getMaterialSetters(selectedNode.value.type))
 const activeCollapse = ref('1')
 
 const layoutSetters = [

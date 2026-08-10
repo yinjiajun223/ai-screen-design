@@ -25,6 +25,7 @@ interface SetterSchema {
 export interface MaterialsDefinition {
   name: string
   icon: string
+  iconColor?: string
   group: string
   schema?: Omit<MaterialSchema, 'id'>
   setters?: SetterSchema[]

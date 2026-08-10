@@ -1,7 +1,7 @@
 <template>
   <div class="material-item" draggable="true" @dragstart="onStart">
     <div class="title">{{ material.name }}</div>
-    <div class="icon"><Icon :icon="material.icon" /></div>
+    <div class="icon" :style="{ color: material.iconColor }"><Icon :icon="material.icon" /></div>
   </div>
 </template>
 
