@@ -36,13 +36,13 @@ interface ToolbarItem {
 const toolbarItems: ToolbarItem[] = [
   {
     title: '物料面板',
-    icon: 'fluent:panel-left-20-filled',
+    icon: 'fluent:box-20-regular',
     panel: 'material',
     onClick: () => togglePanel('material'),
   },
   {
     title: '属性面板',
-    icon: 'fluent:panel-right-20-filled',
+    icon: 'fluent:settings-20-regular',
     panel: 'property',
     onClick: () => togglePanel('property'),
   },
@@ -54,13 +54,13 @@ const toolbarItems: ToolbarItem[] = [
   },
   {
     title: '撤销',
-    icon: 'material-symbols-light:undo',
+    icon: 'fluent:arrow-undo-20-regular',
     disabled: computed(() => !canUndo.value),
     onClick: () => undo(),
   },
   {
     title: '重做',
-    icon: 'material-symbols-light:redo-rounded',
+    icon: 'fluent:arrow-redo-20-regular',
     disabled: computed(() => !canRedo.value),
     onClick: () => redo(),
   },
@@ -78,8 +78,10 @@ defineOptions({
 <style lang="scss" scoped>
 .toolbar-left > button {
   display: grid;
+  width: 30px;
+  height: 30px;
   place-items: center;
-  padding: 4px;
+  padding: 0;
   color: var(--editor-text-muted);
   line-height: 1;
   background: var(--editor-control);
@@ -89,8 +91,8 @@ defineOptions({
   transition: 150ms ease;
 
   > svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 
   &:hover {

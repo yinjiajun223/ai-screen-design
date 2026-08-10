@@ -25,8 +25,8 @@ export const useCanvasRuler = ({ moveableRef, canvasRootRef }) => {
     hoverBg: themeColor('--editor-control-hover'),
     hoverColor: themeColor('--editor-text'),
   } satisfies PaletteType
-  const canvasWidth = toRef(canvas.value, 'width')
-  const canvasHeight = toRef(canvas.value, 'height')
+  const canvasWidth = computed(() => canvas.value.width)
+  const canvasHeight = computed(() => canvas.value.height)
   const canvasStyle = computed(() => ({
     width: canvasWidth.value + 'px',
     height: canvasHeight.value + 'px',
