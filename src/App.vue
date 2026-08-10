@@ -37,6 +37,14 @@ import Editor from './editor/index.vue'
 //     undoStack.push(record)
 //   }
 // }
+
+// // 批处理撤销重做  跟上述一样 只是改为二维数组
+// const obj = { a: 1 }
+// const undoStack = [
+//   { target: obj, key: 'a', oldValue: 1, newValue: 2 },
+//   { target: obj, key: 'a', oldValue: 2, newValue: 3 },
+//   { target: obj, key: 'a', oldValue: 3, newValue: 4 },
+// ]
 </script>
 
 <template>

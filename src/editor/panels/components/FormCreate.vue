@@ -5,6 +5,8 @@
         <el-form-item :label="setter.label">
           <!-- 组件 v-model 等价于 :model-value 绑定和 @update:model-value 监听；读取时调用 computed getter，更新时调用 setter -->
           <component
+            @focus="startBatch"
+            @blur="commitBatch"
             :is="componentMap[setter.type]"
             :modelValue="getValue(formData, setter.key)"
             @update:modelValue="applyChange(formData, setter.key, $event)"
@@ -25,7 +27,7 @@ defineOptions({
 
 defineProps(['setters', 'formData'])
 
-const { applyChange } = useUndoRedo()
+const { applyChange, startBatch, commitBatch } = useUndoRedo()
 
 const componentMap = {
   input: ElInput,

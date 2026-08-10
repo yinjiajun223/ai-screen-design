@@ -65,6 +65,14 @@
       @resize="onResize"
       @drag-group="onDragGroup"
       @resize-group="onResizeGroup"
+      @drag-start="onStart"
+      @drag-end="onEnd"
+      @resize-start="onStart"
+      @resize-end="onEnd"
+      @drag-group-start="onStart"
+      @drag-group-end="onEnd"
+      @resize-group-start="onStart"
+      @resize-group-end="onEnd"
     ></Moveable>
   </div>
 </template>
@@ -94,7 +102,7 @@ const moveableRef = useTemplateRef('moveable')
 
 // prettier-ignore
 const { scale, rectWidth, rectHeight, canvasWidth, canvasHeight, canvasStyle, palette, lines, onZoomChange } = useCanvasRuler({ moveableRef, canvasRootRef })
-const { onDrag, onDragGroup, onResize, onResizeGroup } = useMoveable()
+const { onDrag, onDragGroup, onResize, onResizeGroup, onStart, onEnd } = useMoveable(moveableRef)
 const { onSelect, onSelectEnd, onClearSelected, selectedTarget } = useSelection({ stageRef, moveableRef })
 
 const onDrop = (e: DragEvent) => {

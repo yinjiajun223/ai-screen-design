@@ -32,6 +32,8 @@ export const getValue = (target: Record<string, any>, key: string) => {
 export const setValue = (target: Record<string, any>, key: string, value: any) => {
   const keys = key.split('.')
   const lastKey = keys.pop()
-  const _target = getValue(target, keys.join('.'))
-  _target[lastKey] = value
+  if (keys.length) {
+    target = getValue(target, keys.join('.'))
+  }
+  target[lastKey as string] = value
 }
