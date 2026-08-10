@@ -31,6 +31,8 @@ export const useEditorStore = defineStore('editor', () => {
   const findNodeById = (id: string) => nodes.value.find((node) => node.id === id)
   const clearSelected = () => (selectedNodeIds.value = [])
   const setNodes = (newNodes: MaterialSchema[]) => applyChange(nodes, 'value', newNodes) // 记录节点批量更新操作
+  const updateNode = (id: string, newNode: MaterialSchema) =>
+    setNodes(nodes.value.map((node) => (node.id === id ? newNode : node))) // 记录节点更新操作
 
   /**
    * 右键菜单针对节点的处理
@@ -89,5 +91,6 @@ export const useEditorStore = defineStore('editor', () => {
     moveTop,
     moveBottom,
     toggleLock,
+    updateNode,
   }
 })

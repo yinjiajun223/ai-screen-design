@@ -145,6 +145,10 @@ const onCommand = (commad: string) => {
 
 <style lang="scss" scoped>
 .canvas-root {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate; // 创建新的层级上下文
+
   :deep(.moveable-control-box) {
     --moveable-color: var(--editor-accent);
   }

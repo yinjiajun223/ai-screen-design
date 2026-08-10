@@ -52,7 +52,7 @@ export const useCanvasRuler = ({ moveableRef, canvasRootRef }) => {
     ob.observe(canvasRootRef.value)
 
     // TIPS: 生命周期里是可以套生命周期的
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       ob.disconnect()
     })
   })
