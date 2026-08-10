@@ -55,7 +55,16 @@ export const funnelMaterial: MaterialsDefinition = {
         },
         tooltip: {
           trigger: 'item',
-          formatter: '{b}: {c}',
+          formatter: (params: { name?: string; value?: unknown; data?: unknown }) => {
+            const data = params.data ?? params.value
+            const value = Array.isArray(data)
+              ? data.at(-1)
+              : typeof data === 'object' && data !== null
+                ? (data as { value?: unknown }).value
+                : data
+
+            return `${params.name ?? ''}: ${value ?? ''}`
+          },
         },
         dataset: {
           source: [

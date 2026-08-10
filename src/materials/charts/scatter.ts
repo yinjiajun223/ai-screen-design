@@ -69,16 +69,21 @@ export const scatterMaterial: MaterialsDefinition = {
         grid: {
           top: 54,
           right: 24,
-          bottom: 32,
+          bottom: 52,
           left: 48,
           containLabel: true,
         },
         xAxis: {
-          type: 'value',
+          type: 'category',
           name: '访问次数',
+          nameLocation: 'middle',
+          nameGap: 32,
           nameTextStyle: { color: '#94a3b8' },
           axisLine: { lineStyle: { color: '#64748b' } },
-          axisLabel: { color: '#cbd5e1' },
+          axisLabel: {
+            color: '#cbd5e1',
+            interval: 0,
+          },
           splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.18)' } },
         },
         yAxis: {

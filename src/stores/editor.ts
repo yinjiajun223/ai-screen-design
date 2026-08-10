@@ -18,10 +18,33 @@ export const useEditorStore = defineStore('editor', () => {
       backgroundColor: 'var(--editor-control)',
     },
     nodes: [],
+    dataSources: [
+      {
+        type: 'static',
+        id: crypto.randomUUID(),
+        name: '销售数据源',
+        data: [
+          { label: '一月', value: 2000 },
+          { label: '二月', value: 8000 },
+          { label: '三月', value: 4000 },
+        ],
+      },
+      {
+        type: 'static',
+        id: crypto.randomUUID(),
+        name: '访问数据源',
+        data: [
+          { label: '周一', value: 1000 },
+          { label: '周二', value: 2000 },
+          { label: '周三', value: 3000 },
+        ],
+      },
+    ],
   })
 
   const canvas = toRef(page.value, 'canvas') // 当前画布数据
   const nodes = toRef(page.value, 'nodes') // 当前画布节点数据
+  const dataSources = toRef(page.value, 'dataSources') // 当前画布数据源数据
   const selectedNodeIds = ref<string[]>([]) // 当前选中节点ids
   const selectedNodeId = computed(() => (selectedNodeIds.value.length === 1 ? selectedNodeIds.value[0] : null)) // 当前选中节点id
   const selectedNode = computed(() => nodes.value.find((node) => node.id === selectedNodeId.value)) // 当前选中节点
@@ -81,6 +104,7 @@ export const useEditorStore = defineStore('editor', () => {
     page,
     setPage,
     canvas,
+    dataSources,
     selectedNodeId,
     findNodeById,
     selectedNodeIds,

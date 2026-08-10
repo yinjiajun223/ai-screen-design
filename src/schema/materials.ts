@@ -7,6 +7,7 @@ export interface layout {
 
 export interface MaterialSchema {
   id: string
+  dataId?: string
   type: string
   locked?: boolean
   name: string

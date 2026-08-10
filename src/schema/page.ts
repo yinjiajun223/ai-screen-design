@@ -9,4 +9,18 @@ interface CanvasSchema {
 export interface PageSchema {
   canvas: CanvasSchema
   nodes: MaterialSchema[]
+  dataSources: DataSourceSchema[]
+}
+
+/**
+ * 数据源配置
+ * type: static | api
+ * static: 静态数据源，直接在配置中写死数据
+ * api: 接口数据源，通过接口获取数据
+ */
+export interface DataSourceSchema {
+  type: 'static' | 'api'
+  id: string
+  name: string
+  data: any
 }

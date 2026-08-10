@@ -37,6 +37,11 @@ const { panelVisible } = storeToRefs(useEditorStore())
 defineOptions({
   name: 'ScreenEditor',
 })
+
+const editorStore = useEditorStore()
+const { dataSources } = storeToRefs(editorStore)
+
+provide('dataSources', dataSources)
 </script>
 
 <style lang="scss" scoped>
