@@ -1,11 +1,11 @@
 <template>
   <div class="node-property">
-    <el-collapse>
+    <el-collapse v-model="activeCollapse">
+      <el-collapse-item title="组件属性" name="1">
+        <FormCreate :setters="setters" :formData="selectedNode" />
+      </el-collapse-item>
       <el-collapse-item title="布局属性">
         <FormCreate :setters="layoutSetters" :formData="selectedNode" />
-      </el-collapse-item>
-      <el-collapse-item title="组件属性">
-        <FormCreate :setters="setters" :formData="selectedNode" />
       </el-collapse-item>
     </el-collapse>
   </div>
@@ -25,6 +25,7 @@ const editorStore = useEditorStore()
 const { selectedNode } = storeToRefs(editorStore)
 
 const setters = getMaterialSetters(selectedNode.value.type)
+const activeCollapse = ref('1')
 
 const layoutSetters = [
   { label: '宽度', key: 'layout.width', type: 'number', span: 12 },
