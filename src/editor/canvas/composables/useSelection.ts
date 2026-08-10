@@ -25,13 +25,18 @@ export const useSelection = ({ stageRef, moveableRef }) => {
 
   // 监听已选的id列表
   watch(
-    selectedNodeIds,
-    (ids) => {
-      selectedTarget.value = ids.map(
-        (id) => stageRef.value.querySelector(`[data-node-id='${id}']:not([data-node-locked='true'])`) as HTMLElement,
-      )
+    () => [selectedNodeIds.value, editorStore.nodes] as const,
+    ([ids]) => {
+      const validIds = ids.filter((id) => editorStore.findNodeById(id))
+      if (validIds.length !== ids.length) {
+        editorStore.selectedNodes(validIds)
+      }
+
+      selectedTarget.value = validIds
+        .map((id) => stageRef.value?.querySelector(`[data-node-id='${id}']:not([data-node-locked='true'])`) as HTMLElement | null)
+        .filter((target): target is HTMLElement => target !== null && target !== undefined)
     },
-    { deep: true, flush: 'post' },
+    { flush: 'post' },
   )
 
   return {

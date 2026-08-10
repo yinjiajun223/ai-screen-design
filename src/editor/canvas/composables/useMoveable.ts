@@ -18,6 +18,7 @@ export const useMoveable = (moveableRef) => {
     e.target.style.left = e.left + 'px'
     e.target.style.top = e.top + 'px'
     const node = getNodeByTarget(e.target as HTMLElement)
+    if (!node) return
     applyChange(node, 'layout', { ...node.layout, x: e.left, y: e.top })
   }
 
@@ -29,6 +30,7 @@ export const useMoveable = (moveableRef) => {
     e.target.style.width = e.width + 'px'
     e.target.style.height = e.height + 'px'
     const node = getNodeByTarget(e.target as HTMLElement)
+    if (!node) return
     applyChange(node, 'layout', { ...node.layout, width: e.width, height: e.height })
     onDrag(e.drag)
   }
