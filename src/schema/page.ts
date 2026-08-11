@@ -23,4 +23,7 @@ export interface DataSourceSchema {
   id: string
   name: string
   data: any
+  url?: string // api 请求的接口地址
+  interval?: number // api 轮询的间隔时间，单位为毫秒
+  params?: Record<string, any> // api 请求的参数
 }

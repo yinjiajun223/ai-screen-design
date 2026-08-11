@@ -1,8 +1,9 @@
 import type { DataSourceSchema } from '@/schema/page'
+import axios from 'axios'
 
 export const useDataSource = (dataId: Ref<string>) => {
   const dataSources = inject('dataSources') as Ref<DataSourceSchema[]>
-
+  let timer
   /**
    * source: 当前组件绑定的数据源对象
    * id: 数据源id
@@ -16,10 +17,46 @@ export const useDataSource = (dataId: Ref<string>) => {
     return dataSource
   })
 
-  /**
-   * 保存的用于组件消费的数据源
-   */
-  const data = computed(() => source.value?.data)
+  const data = ref()
+
+  const loadData = async () => {
+    if (!source.value) return
+
+    const url = source.value.url
+
+    if (source.value.type === 'api' && url) {
+      try {
+        // 获取 url 中的参数 date
+        const search = new URLSearchParams(location.search)
+
+        // 将 url 中的参数和 source.value.params 合并，优先使用 url 中的参数
+        const params = Object.fromEntries(search.entries())
+
+        const res = await axios.get(url, {
+          // url 优先级 > source.value.params
+          params: { ...source.value.params, ...params },
+        })
+        data.value = res.data
+      } finally {
+        if (source.value.interval) {
+          timer = setTimeout(() => {
+            loadData()
+          }, source.value.interval)
+        }
+      }
+    } else {
+      // 静态数据源不需要加载数据
+      data.value = source.value.data
+    }
+  }
+
+  // 监听数据源变化，重新加载数据
+  watch(source, () => loadData(), { immediate: true })
+
+  onBeforeUnmount(() => {
+    // 组件销毁前 清除定时器，避免内存泄漏
+    clearTimeout(timer)
+  })
 
   return {
     data,

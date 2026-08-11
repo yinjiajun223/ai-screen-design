@@ -39,6 +39,17 @@ export const useEditorStore = defineStore('editor', () => {
           { label: '周三', value: 3000 },
         ],
       },
+      {
+        type: 'api',
+        id: crypto.randomUUID(),
+        name: '上升趋势',
+        interval: 2000,
+        data: [],
+        params: {
+          date: '2026-01-01',
+        },
+        url: '/api/data',
+      },
     ],
   })
 

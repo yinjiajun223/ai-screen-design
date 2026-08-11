@@ -8,6 +8,8 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'element-plus/es/components/message/style/css'
 import './styles/index.css'
 
+import '@/mock/data.ts'
+
 const app = createApp(App)
 
 app.use(createPinia())
