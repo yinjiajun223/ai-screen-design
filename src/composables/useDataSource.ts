@@ -4,6 +4,8 @@ import axios from 'axios'
 
 export const useDataSource = (dataId: Ref<string>) => {
   const dataSources = inject('dataSources') as Ref<DataSourceSchema[]>
+  const loading = ref(false) // 数据源加载状态
+  const error = ref(null) // 数据源加载错误信息
   let timer
   /**
    * source: 当前组件绑定的数据源对象
@@ -19,7 +21,10 @@ export const useDataSource = (dataId: Ref<string>) => {
 
   const data = ref()
 
-  const loadData = async () => {
+  const loadData = async (params?: Record<string, any>) => {
+    // 取消上一次的定时器，避免重复请求
+    clearTimeout(timer)
+
     if (!source.value) {
       // 数据源被删除或节点未绑定数据源时，清空旧缓存，交由物料回退到默认数据。
       data.value = undefined
@@ -30,8 +35,13 @@ export const useDataSource = (dataId: Ref<string>) => {
 
     if (source.value.type === 'api' && url) {
       try {
-        data.value = await fetchData(source.value)
+        loading.value = true
+        // 等一个 promise，获取数据源数据
+        data.value = await fetchData(source.value, params)
+      } catch (e) {
+        error.value = e
       } finally {
+        loading.value = false
         if (source.value.interval) {
           timer = setTimeout(() => {
             loadData()
@@ -41,7 +51,6 @@ export const useDataSource = (dataId: Ref<string>) => {
     } else {
       // 静态数据源不需要加载数据
       data.value = source.value.data
-      console.log('data.value', data.value)
     }
   }
 
@@ -55,26 +64,53 @@ export const useDataSource = (dataId: Ref<string>) => {
 
   return {
     data,
+    loading,
+    error,
+    refresh: loadData,
   }
 }
 
-export const fetchData = async (source: DataSourceSchema) => {
+/**
+ *
+ * 相同的 config 做请求复用
+ * '{"url":"/api/data","method":"get","params":{"date":"2026-01-01"}}' : Promise
+ */
+const requestMap = {}
+
+export const fetchData = async (source: DataSourceSchema, data?: Record<string, any>) => {
   // 获取 url 中的参数 date
   const search = new URLSearchParams(location.search)
 
   // 将 url 中的参数和 source.value.params 合并，优先使用 url 中的参数
   const params = Object.fromEntries(search.entries())
 
-  const queryParams = { ...source.params, ...params }
+  // data = 手动传递的参数 优先级最高
+  const queryParams = { ...source.params, ...params, ...data }
   const paramsKey = source.method === 'get' ? 'params' : 'data'
-  const res = await axios.request({
+
+  const config = {
     url: source.url,
     method: source.method || 'get',
     // url 优先级 > source.value.params
     [paramsKey]: queryParams,
-  })
+  }
+  const key = JSON.stringify(config)
+
+  // 有缓存不请求了
+  if (requestMap[key]) return requestMap[key]
+
+  const promise = axios
+    .request(config)
+    .then((res) => {
+      return getValue(res.data, source.responsePath)
+    })
+    .finally(() => {
+      // 请求完成后删除缓存，避免数据源数据过期
+      delete requestMap[key]
+    })
 
   // { list: [] }
   // source.responsePath = 'list'
-  return getValue(res.data, source.responsePath)
+  requestMap[key] = promise
+  return promise
 }

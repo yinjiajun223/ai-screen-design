@@ -1,5 +1,8 @@
 import Mock from 'mockjs'
 
+Mock.setup({
+  timeout: '1000-2000',
+})
 Mock.mock(/\/api\/data/, 'get', (options) => {
   const url = new URL(options.url, location.origin)
   const search = new URLSearchParams(url.search)

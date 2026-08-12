@@ -50,6 +50,7 @@ export const useEditorStore = defineStore('editor', () => {
         },
         url: '/api/data',
         method: 'get',
+        responsePath: 'list',
       },
     ],
   })

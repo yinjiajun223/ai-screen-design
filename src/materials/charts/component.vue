@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-material w-full h-full" :style="schema.style" ref="chartRef"></div>
+  <div v-loading="loading" class="chart-material w-full h-full" :style="schema.style" ref="chartRef"></div>
 </template>
 
 <script lang="ts" setup>
@@ -22,7 +22,7 @@ const chartRef = useTemplateRef<HTMLDivElement>('chartRef')
 const props = defineProps<{ schema: MaterialSchema }>()
 
 const dataId = computed(() => props.schema.dataId)
-const { data } = useDataSource(dataId)
+const { data, loading } = useDataSource(dataId)
 const option = computed(() => {
   const _option = props.schema.props.option
   return {
