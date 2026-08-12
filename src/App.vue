@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import Editor from './editor/index.vue'
-
 /**
  * 撤销 重做 策略模式
  * 1.备忘录模式: 存快照,深拷贝 --> 缺点：比较浪费空间
@@ -48,7 +46,7 @@ import Editor from './editor/index.vue'
 </script>
 
 <template>
-  <Editor />
+  <router-view></router-view>
   <!-- <h1>{{ count }}</h1>
   <el-button @click="onClick">count++</el-button>
   <el-button @click="undo">撤销</el-button>

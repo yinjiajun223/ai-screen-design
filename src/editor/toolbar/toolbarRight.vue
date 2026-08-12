@@ -53,6 +53,7 @@ defineOptions({
 
 const editorStore = useEditorStore()
 const { page } = storeToRefs(editorStore)
+const router = useRouter()
 const importFileInput = useTemplateRef<HTMLInputElement>('importFileInput')
 const dataSourceManagerRef = useTemplateRef<InstanceType<typeof DataSourceManager>>('dataSourceManagerRef')
 const dataSourceVisible = ref(false)
@@ -66,7 +67,7 @@ const toolbarItems = [
       dataSourceVisible.value = true
     },
   },
-  { title: '预览', icon: 'fluent:eye-20-regular', onClick: () => ElMessage.info('预览功能待实现') },
+  { title: '预览', icon: 'fluent:eye-20-regular', onClick: () => router.push('/preview') },
   {
     title: '编辑 JSON',
     icon: 'fluent:braces-20-regular',
