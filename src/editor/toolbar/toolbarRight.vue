@@ -60,7 +60,7 @@ const visible = ref(false)
 const jsonText = ref('')
 const toolbarItems = [
   {
-    title: '数据源',
+    title: '数据源配置',
     icon: 'fluent:data-pie-20-regular',
     onClick: () => {
       dataSourceVisible.value = true

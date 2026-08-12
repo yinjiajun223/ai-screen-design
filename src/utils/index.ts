@@ -16,6 +16,8 @@ export const debounce = (fn: Function, delay: number) => {
  * getValue(obj, 'style.fontSize') => undefined
  */
 export const getValue = (target: Record<string, any>, key: string) => {
+  if (!target || !key) return target
+
   const keys = key.split('.')
   while (keys.length) {
     const key = keys.shift()

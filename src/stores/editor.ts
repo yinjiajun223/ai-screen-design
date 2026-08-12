@@ -49,6 +49,7 @@ export const useEditorStore = defineStore('editor', () => {
           date: '2026-01-01',
         },
         url: '/api/data',
+        method: 'get',
       },
     ],
   })

@@ -1,4 +1,5 @@
 import type { DataSourceSchema } from '@/schema/page'
+import { getValue } from '@/utils'
 import axios from 'axios'
 
 export const useDataSource = (dataId: Ref<string>) => {
@@ -29,17 +30,7 @@ export const useDataSource = (dataId: Ref<string>) => {
 
     if (source.value.type === 'api' && url) {
       try {
-        // 获取 url 中的参数 date
-        const search = new URLSearchParams(location.search)
-
-        // 将 url 中的参数和 source.value.params 合并，优先使用 url 中的参数
-        const params = Object.fromEntries(search.entries())
-
-        const res = await axios.get(url, {
-          // url 优先级 > source.value.params
-          params: { ...source.value.params, ...params },
-        })
-        data.value = res.data
+        data.value = await fetchData(source.value)
       } finally {
         if (source.value.interval) {
           timer = setTimeout(() => {
@@ -65,4 +56,25 @@ export const useDataSource = (dataId: Ref<string>) => {
   return {
     data,
   }
+}
+
+export const fetchData = async (source: DataSourceSchema) => {
+  // 获取 url 中的参数 date
+  const search = new URLSearchParams(location.search)
+
+  // 将 url 中的参数和 source.value.params 合并，优先使用 url 中的参数
+  const params = Object.fromEntries(search.entries())
+
+  const queryParams = { ...source.params, ...params }
+  const paramsKey = source.method === 'get' ? 'params' : 'data'
+  const res = await axios.request({
+    url: source.url,
+    method: source.method || 'get',
+    // url 优先级 > source.value.params
+    [paramsKey]: queryParams,
+  })
+
+  // { list: [] }
+  // source.responsePath = 'list'
+  return getValue(res.data, source.responsePath)
 }

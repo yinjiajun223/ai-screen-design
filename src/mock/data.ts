@@ -13,5 +13,5 @@ Mock.mock(/\/api\/data/, 'get', (options) => {
       },
     ],
   })
-  return data.list
+  return data
 })

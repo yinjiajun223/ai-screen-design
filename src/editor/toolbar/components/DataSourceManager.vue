@@ -10,7 +10,7 @@
           class="data-source-list__item"
           :class="{ 'is-active': activeSource?.id === item.id }"
         >
-          <button class="data-source-list__select" type="button" @click="activeSource = item">
+          <button class="data-source-list__select" type="button" @click="selectSource(item)">
             <span class="data-source-list__indicator"></span>
             <span class="data-source-list__name">{{ item.name }}</span>
           </button>
@@ -46,7 +46,18 @@
             <span>接口配置</span>
           </div>
           <el-form-item label="请求地址">
-            <el-input v-model="activeSource.url" placeholder="请输入接口地址"></el-input>
+            <div class="data-source-api__url-field">
+              <el-input v-model="activeSource.url" placeholder="请输入接口地址" />
+              <el-button class="data-source-api__preview-button" type="primary" :loading="isRequesting" @click="onRequest">
+                请求预览
+              </el-button>
+            </div>
+          </el-form-item>
+          <el-form-item label="请求方式">
+            <el-radio-group v-model="activeSource.method">
+              <el-radio-button label="GET" value="get"></el-radio-button>
+              <el-radio-button label="POST" value="post"></el-radio-button>
+            </el-radio-group>
           </el-form-item>
           <el-form-item label="轮询周期">
             <el-input v-model="activeSource.interval" placeholder="单位：毫秒">
@@ -56,6 +67,15 @@
           <el-form-item label="参数">
             <div class="data-source-api__editor">
               <MonacoEditor v-model="activeSource.params" />
+            </div>
+          </el-form-item>
+
+          <el-form-item label="响应路径">
+            <el-input v-model="activeSource.responsePath"></el-input>
+          </el-form-item>
+          <el-form-item v-if="hasPreviewData" label="预览数据">
+            <div class="data-source-api__editor data-source-api__editor--preview">
+              <MonacoEditor v-model="responseText" />
             </div>
           </el-form-item>
         </div>
@@ -70,6 +90,7 @@ import { storeToRefs } from 'pinia'
 import MonacoEditor from '@/components/MonacoEditor/index.vue'
 import { deepClone } from '@/utils'
 import { Icon } from '@iconify/vue'
+import { fetchData } from '@/composables/useDataSource'
 
 defineOptions({
   name: 'DataSourceManager',
@@ -78,7 +99,9 @@ defineOptions({
 const editorStore = useEditorStore()
 const { dataSources } = storeToRefs(editorStore)
 const activeSource = ref()
-
+const responseText = ref('')
+const isRequesting = ref(false)
+const hasPreviewData = ref(false)
 /**
  * 深拷贝一份数据源
  * 1、data params 这些需要转字符串
@@ -103,14 +126,36 @@ const onAdd = () => {
     params: '{}',
   })
 
-  activeSource.value = data.value.at(-1)
+  selectSource(data.value.at(-1))
 }
 
 const onRemove = (id: string) => {
   data.value = data.value.filter((item) => item.id !== id)
 
   if (activeSource.value?.id === id) {
-    activeSource.value = data.value.at(0)
+    selectSource(data.value.at(0))
+  }
+}
+
+const selectSource = (source) => {
+  activeSource.value = source
+  responseText.value = ''
+  hasPreviewData.value = false
+}
+
+const onRequest = async () => {
+  if (!activeSource.value?.url) return
+
+  isRequesting.value = true
+  try {
+    const res = await fetchData({
+      ...activeSource.value,
+      params: activeSource.value.params ? JSON.parse(activeSource.value.params) : undefined,
+    })
+    responseText.value = JSON.stringify(res, null, 2)
+    hasPreviewData.value = true
+  } finally {
+    isRequesting.value = false
   }
 }
 
@@ -254,6 +299,7 @@ defineExpose({
   .data-source-content {
     flex: 1;
     min-width: 0;
+    overflow: hidden;
     padding: 16px;
     background: var(--editor-panel);
     border: 1px solid var(--editor-border);
@@ -303,7 +349,9 @@ defineExpose({
       display: flex;
       flex-direction: column;
       height: calc(100% - 88px);
+      min-height: 0;
       padding: 14px;
+      overflow-y: auto;
       background: color-mix(in srgb, var(--editor-control) 62%, var(--editor-panel));
       border: 1px solid var(--editor-border);
       border-radius: 6px;
@@ -350,12 +398,28 @@ defineExpose({
         box-shadow: none;
       }
 
-      :deep(.el-form-item:last-child) {
+      &__url-field {
         display: flex;
         flex: 1;
+        gap: 8px;
+        min-width: 0;
+
+        :deep(.el-input) {
+          flex: 1;
+          min-width: 0;
+        }
+      }
+
+      &__preview-button {
+        flex: 0 0 auto;
+      }
+
+      :deep(.el-form-item:last-child) {
+        display: flex;
+        flex: none;
         flex-direction: column;
         align-items: stretch;
-        min-height: 0;
+        height: auto;
         margin: 4px 0 0;
 
         .el-form-item__label {
@@ -371,8 +435,14 @@ defineExpose({
       }
 
       &__editor {
-        height: 100%;
+        height: 150px;
         width: 100%;
+        overflow: hidden;
+
+        &--preview {
+          height: 220px;
+        }
+
         :deep(.editor-contaienr) {
           min-height: 0;
         }
