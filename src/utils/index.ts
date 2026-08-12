@@ -37,3 +37,10 @@ export const setValue = (target: Record<string, any>, key: string, value: any) =
   }
   target[lastKey as string] = value
 }
+
+export const deepClone = <T>(value: T): T => {
+  // 拦截基础类型
+  if (value === null || typeof value !== 'object') return value
+
+  return JSON.parse(JSON.stringify(value))
+}

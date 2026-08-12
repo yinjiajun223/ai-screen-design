@@ -20,6 +20,23 @@
         <el-button type="primary" @click="onConfirm">确认</el-button>
       </template>
     </el-drawer>
+
+    <el-dialog
+      destroy-on-close
+      v-model="dataSourceVisible"
+      class="data-source-dialog"
+      header-class="data-source-dialog__header"
+      body-class="data-source-dialog__body"
+      title="数据源配置"
+      width="800"
+    >
+      <DataSourceManager ref="dataSourceManagerRef" />
+
+      <template #footer>
+        <el-button @click="dataSourceVisible = false">取消</el-button>
+        <el-button type="primary" @click="onSave">确认</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -28,6 +45,7 @@ import { ElMessage } from 'element-plus'
 import MonacoEditor from '@/components/MonacoEditor/index.vue'
 import { useEditorStore } from '@/stores/editor'
 import { storeToRefs } from 'pinia'
+import DataSourceManager from './components/DataSourceManager.vue'
 
 defineOptions({
   name: 'ToolbarRight',
@@ -36,8 +54,18 @@ defineOptions({
 const editorStore = useEditorStore()
 const { page } = storeToRefs(editorStore)
 const importFileInput = useTemplateRef<HTMLInputElement>('importFileInput')
-
+const dataSourceManagerRef = useTemplateRef<InstanceType<typeof DataSourceManager>>('dataSourceManagerRef')
+const dataSourceVisible = ref(false)
+const visible = ref(false)
+const jsonText = ref('')
 const toolbarItems = [
+  {
+    title: '数据源',
+    icon: 'fluent:data-pie-20-regular',
+    onClick: () => {
+      dataSourceVisible.value = true
+    },
+  },
   { title: '预览', icon: 'fluent:eye-20-regular', onClick: () => ElMessage.info('预览功能待实现') },
   {
     title: '编辑 JSON',
@@ -70,9 +98,6 @@ const toolbarItems = [
   },
 ]
 
-const visible = ref(false)
-const jsonText = ref('')
-
 const onImportFileChange = (event: Event) => {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
@@ -99,6 +124,12 @@ const onConfirm = () => {
   const newPage = JSON.parse(jsonText.value)
   editorStore.setPage(newPage)
   visible.value = false
+}
+
+const onSave = () => {
+  // 调用 DataSourceManager 暴露的方法
+  dataSourceManagerRef.value?.save()
+  dataSourceVisible.value = false
 }
 </script>
 
@@ -136,5 +167,42 @@ const onConfirm = () => {
 
 .import-file-input {
   display: none;
+}
+
+:deep(.data-source-dialog) {
+  overflow: hidden;
+  background: var(--editor-header);
+  border: 1px solid var(--editor-border);
+  border-radius: 8px;
+  box-shadow: 0 24px 64px rgb(0 0 0 / 45%);
+}
+
+:deep(.data-source-dialog__header) {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  margin: 0;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--editor-border);
+
+  .el-dialog__title {
+    color: var(--editor-text);
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .el-dialog__headerbtn {
+    top: 0;
+    width: 56px;
+    height: 56px;
+
+    &:hover .el-dialog__close {
+      color: var(--editor-accent);
+    }
+  }
+}
+
+:deep(.data-source-dialog__body) {
+  padding: 16px 20px 20px;
 }
 </style>

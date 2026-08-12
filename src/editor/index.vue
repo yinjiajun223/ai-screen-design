@@ -27,10 +27,12 @@
 <script lang="ts" setup>
 import { useEditorStore } from '@/stores/editor'
 import { storeToRefs } from 'pinia'
-import { ToolbarLeft, ToolbarRight, MaterialPanel } from './index'
 import LayerPanel from './panels/layer.vue'
 import CanvasRoot from './canvas/index.vue'
 import PropertyPanel from './panels/property.vue'
+import MaterialPanel from './panels/material.vue'
+import ToolbarLeft from '@/editor/toolbar/toolbarLeft.vue'
+import ToolbarRight from '@/editor/toolbar/toolbarRight.vue'
 
 const { panelVisible } = storeToRefs(useEditorStore())
 

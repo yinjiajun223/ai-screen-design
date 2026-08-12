@@ -24,9 +24,9 @@ window.MonacoEnvironment = {
 const props = defineProps<{ lang?: string }>()
 const modeValue = defineModel<string>()
 const editorRef = useTemplateRef<HTMLDivElement>('editorRef')
-
+let instance
 onMounted(() => {
-  const instance = editor.create(editorRef.value, {
+  instance = editor.create(editorRef.value, {
     value: modeValue.value,
     theme: 'vs-dark',
     tabSize: 2,
@@ -35,6 +35,7 @@ onMounted(() => {
     automaticLayout: true, // 自适应父节点的宽高
   })
 
+  // 监听编辑器内容变化 更新到 modeValue
   instance.onDidChangeModelContent(() => {
     modeValue.value = instance.getValue()
   })
@@ -42,6 +43,12 @@ onMounted(() => {
   onBeforeUnmount(() => {
     instance.dispose()
   })
+})
+
+watch(modeValue, (newValue) => {
+  if (instance && instance.getValue() === newValue) return
+
+  instance.setValue(newValue)
 })
 </script>
 

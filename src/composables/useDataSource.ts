@@ -13,7 +13,6 @@ export const useDataSource = (dataId: Ref<string>) => {
    */
   const source = computed(() => {
     const dataSource = dataSources.value.find((ds) => ds.id === dataId.value)
-
     return dataSource
   })
 
@@ -47,6 +46,7 @@ export const useDataSource = (dataId: Ref<string>) => {
     } else {
       // 静态数据源不需要加载数据
       data.value = source.value.data
+      console.log('data.value', data.value)
     }
   }
 
