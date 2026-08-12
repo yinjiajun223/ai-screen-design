@@ -19,7 +19,11 @@ export const useDataSource = (dataId: Ref<string>) => {
   const data = ref()
 
   const loadData = async () => {
-    if (!source.value) return
+    if (!source.value) {
+      // 数据源被删除或节点未绑定数据源时，清空旧缓存，交由物料回退到默认数据。
+      data.value = undefined
+      return
+    }
 
     const url = source.value.url
 
