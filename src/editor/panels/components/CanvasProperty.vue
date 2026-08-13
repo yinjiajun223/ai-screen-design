@@ -39,6 +39,4 @@ const backgroundColor = computed<string | null>({
     canvas.value.backgroundColor = value || defaultBackgroundColor
   },
 })
-
-console.log('canvas', canvas)
 </script>

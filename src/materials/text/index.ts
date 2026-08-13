@@ -10,6 +10,7 @@ const textMaterials: MaterialsDefinition = {
   setters: [
     { type: 'input', label: '文本内容', key: 'props.content' },
     { type: 'color', label: '颜色', key: 'style.color' },
+    { type: 'number', label: '字体大小', key: 'style.fontSize' },
   ],
   schema: {
     type: 'text',
@@ -22,6 +23,7 @@ const textMaterials: MaterialsDefinition = {
     },
     style: {
       color: '#fff',
+      fontSize: 16,
     },
     props: {
       content: 'Hello World',

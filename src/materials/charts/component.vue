@@ -1,4 +1,5 @@
 <template>
+  <el-button @click="refresh">刷新</el-button>
   <div v-loading="loading" class="chart-material w-full h-full" :style="schema.style" ref="chartRef"></div>
 </template>
 
@@ -22,7 +23,7 @@ const chartRef = useTemplateRef<HTMLDivElement>('chartRef')
 const props = defineProps<{ schema: MaterialSchema }>()
 
 const dataId = computed(() => props.schema.dataId)
-const { data, loading } = useDataSource(dataId)
+const { data, loading, refresh } = useDataSource(dataId)
 const option = computed(() => {
   const _option = props.schema.props.option
   return {
@@ -49,6 +50,10 @@ onMounted(() => {
     observer.disconnect()
     chart.dispose()
   })
+})
+
+defineExpose({
+  refresh,
 })
 
 watch(

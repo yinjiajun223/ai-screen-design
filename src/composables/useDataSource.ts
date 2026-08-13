@@ -24,7 +24,6 @@ export const useDataSource = (dataId: Ref<string>) => {
   const loadData = async (params?: Record<string, any>) => {
     // 取消上一次的定时器，避免重复请求
     clearTimeout(timer)
-
     if (!source.value) {
       // 数据源被删除或节点未绑定数据源时，清空旧缓存，交由物料回退到默认数据。
       data.value = undefined
