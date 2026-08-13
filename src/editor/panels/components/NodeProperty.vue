@@ -2,7 +2,10 @@
   <div class="node-property">
     <div class="node-title">
       <span>{{ selectedNode.name }}</span>
-      <span class="cursor-pointer" @click="previewJson"> <Icon icon="si:json-duotone" /></span>
+      <div class="flex gap-x-20">
+        <span class="cursor-pointer" @click="eventVisible = true" title="编辑事件"> <Icon icon="material-symbols:event-note-outline" /></span>
+        <span class="cursor-pointer" @click="previewJson" title="编辑 JSON"> <Icon icon="si:json-duotone" /></span>
+      </div>
     </div>
 
     <el-tabs v-model="activeTab" type="card" stretch>
@@ -21,14 +24,23 @@
       </el-tab-pane>
     </el-tabs>
 
-    <el-drawer :destroy-on-close="true" v-model="visible" title="编辑 JSON" size="600">
+    <el-drawer destroy-on-close v-model="jsonVisible" title="编辑 JSON" size="600">
       <MonacoEditor v-model="jsonText" />
 
       <template #footer>
-        <el-button @click="visible = false">取消</el-button>
+        <el-button @click="jsonVisible = false">取消</el-button>
         <el-button type="primary" @click="onConfirm">确认</el-button>
       </template>
     </el-drawer>
+
+    <el-dialog destroy-on-close title="事件配置" width="800" v-model="eventVisible">
+      <NodeEvents ref="nodeEventsRef"></NodeEvents>
+
+      <template #footer>
+        <el-button @click="eventVisible = false">取消</el-button>
+        <el-button type="primary" @click="onConfirmEvent">确认</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -39,6 +51,7 @@ import { storeToRefs } from 'pinia'
 import FormCreate from './FormCreate.vue'
 import MonacoEditor from '@/components/MonacoEditor/index.vue'
 import DataSource from './DataSource.vue'
+import NodeEvents from './NodeEvents.vue'
 
 defineOptions({
   name: 'NodeProperty',
@@ -47,10 +60,11 @@ defineOptions({
 const activeTab = ref('property')
 const editorStore = useEditorStore()
 const { selectedNode } = storeToRefs(editorStore)
-
+const nodeEventsRef = useTemplateRef<typeof NodeEvents>('nodeEventsRef')
 const setters = computed(() => getMaterialSetters(selectedNode.value.type))
 const activeCollapse = ref('1')
-const visible = ref(false)
+const jsonVisible = ref(false)
+const eventVisible = ref(false)
 const layoutSetters = [
   { label: '宽度', key: 'layout.width', type: 'number', span: 12 },
   { label: '高度', key: 'layout.height', type: 'number', span: 12 },
@@ -62,7 +76,7 @@ const jsonText = ref('')
 const previewJson = () => {
   const jsonStr = JSON.stringify(selectedNode.value, null, 2)
   jsonText.value = jsonStr
-  visible.value = true
+  jsonVisible.value = true
 }
 
 const onConfirm = () => {
@@ -73,7 +87,12 @@ const onConfirm = () => {
     id: selectedNode.value.id, // 保留原来的 id 避免用户改id type
     type: selectedNode.value.type, // 保留原来的 type
   })
-  visible.value = false
+  jsonVisible.value = false
+}
+
+const onConfirmEvent = () => {
+  nodeEventsRef.value?.save()
+  eventVisible.value = false
 }
 </script>
 

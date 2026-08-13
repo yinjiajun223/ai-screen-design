@@ -5,7 +5,7 @@ export interface layout {
   height: number
 }
 
-interface MaterialEvent {
+export interface MaterialEvent {
   type: string // 事件类型 'click' | 'hover' | 'change' | 'submit' | 'custom'
   name: string // 事件名称
   code: string // 事件代码 函数体

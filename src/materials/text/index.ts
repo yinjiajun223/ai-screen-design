@@ -32,7 +32,7 @@ const textMaterials: MaterialsDefinition = {
       {
         type: 'click',
         name: 'fn',
-        code: `$context.refreshNodesByDataId('567')`,
+        code: ``,
       },
     ],
   },

@@ -26,6 +26,7 @@ const modeValue = defineModel<string>()
 const editorRef = useTemplateRef<HTMLDivElement>('editorRef')
 let instance
 onMounted(() => {
+  console.log('props.lang', props.lang)
   instance = editor.create(editorRef.value, {
     value: modeValue.value,
     theme: 'vs-dark',
