@@ -2,7 +2,7 @@
   <div class="preview-container">
     <div class="canvas-root" :style="canvasStyle">
       <div class="canvas-node" v-for="(node, index) in nodes" :key="node.id" :style="getNodeStyle(node, index)">
-        <component :ref="node.id" :is="getMaterialComponent(node.type)" :schema="node"></component>
+        <component :ref="node.id" :is="getMaterialComponent(node.type)" v-on="createEvents(node)" :schema="node"></component>
       </div>
     </div>
   </div>
@@ -11,6 +11,7 @@
 <script lang="ts" setup>
 import { getMaterialComponent } from '@/materials/index'
 import { createRuntimeContext } from '@/runtime/context'
+import type { MaterialSchema } from '@/schema/materials'
 import type { PageSchema } from '@/schema/page'
 
 defineOptions({
@@ -20,10 +21,6 @@ defineOptions({
 const props = defineProps<{ page: PageSchema }>()
 const runtimePage = ref(props.page)
 const context = createRuntimeContext(runtimePage)
-// 暂时挂载到 window 上，方便调试
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-window.$context = context
 const canvas = computed(() => runtimePage.value.canvas)
 const nodes = computed(() => runtimePage.value.nodes)
 const dataSources = computed(() => runtimePage.value.dataSources)
@@ -80,6 +77,25 @@ const getNodeStyle = (node, index) => ({
   top: node.layout.y + 'px',
   zIndex: index + 1,
 })
+
+/**
+ * 根据节点的事件配置，创建对应的事件监听器
+ * @param node 节点配置
+ * @returns 事件监听器对象
+ */
+const createEvents = (node: MaterialSchema) => {
+  const listeners = {}
+  const events = node.events || []
+
+  events.forEach((event) => {
+    listeners[event.type] = () => {
+      const fn = new Function('$context', '$node', event.code)
+      fn(context, node) // 执行函数体，确保函数体中的代码可以访问到当前作用域的变量
+    }
+  })
+
+  return listeners
+}
 
 provide('dataSources', dataSources)
 </script>

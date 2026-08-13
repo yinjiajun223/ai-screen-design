@@ -21,7 +21,7 @@ export const useEditorStore = defineStore('editor', () => {
     dataSources: [
       {
         type: 'static',
-        id: crypto.randomUUID(),
+        id: '123',
         name: '销售数据源',
         data: [
           { label: '一月', value: 2000 },
@@ -31,7 +31,7 @@ export const useEditorStore = defineStore('editor', () => {
       },
       {
         type: 'static',
-        id: crypto.randomUUID(),
+        id: '456',
         name: '访问数据源',
         data: [
           { label: '周一', value: 1000 },
@@ -41,7 +41,7 @@ export const useEditorStore = defineStore('editor', () => {
       },
       {
         type: 'api',
-        id: crypto.randomUUID(),
+        id: '567',
         name: '上升趋势',
         // interval: 2000,
         data: [],

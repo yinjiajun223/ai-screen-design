@@ -5,6 +5,12 @@ export interface layout {
   height: number
 }
 
+interface MaterialEvent {
+  type: string // 事件类型 'click' | 'hover' | 'change' | 'submit' | 'custom'
+  name: string // 事件名称
+  code: string // 事件代码 函数体
+}
+
 export interface MaterialSchema {
   id: string
   dataId?: string
@@ -14,6 +20,7 @@ export interface MaterialSchema {
   layout: layout
   style?: Record<string, any> // 样式并不是所有节点都需要的 比如echarts
   props: Record<string, any>
+  events?: MaterialEvent[]
 }
 
 interface SetterSchema {

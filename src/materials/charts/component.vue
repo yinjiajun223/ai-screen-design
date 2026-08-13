@@ -1,5 +1,4 @@
 <template>
-  <el-button @click="refresh">刷新</el-button>
   <div v-loading="loading" class="chart-material w-full h-full" :style="schema.style" ref="chartRef"></div>
 </template>
 
