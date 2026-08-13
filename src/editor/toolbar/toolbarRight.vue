@@ -46,6 +46,7 @@ import MonacoEditor from '@/components/MonacoEditor/index.vue'
 import { useEditorStore } from '@/stores/editor'
 import { storeToRefs } from 'pinia'
 import DataSourceManager from './components/DataSourceManager.vue'
+import { publish } from '@/utils/publish'
 
 defineOptions({
   name: 'ToolbarRight',
@@ -76,7 +77,14 @@ const toolbarItems = [
       visible.value = true
     },
   },
-  { title: '发布', icon: 'fluent:cloud-arrow-up-20-regular', onClick: () => ElMessage.info('发布功能待实现') },
+  {
+    title: '发布',
+    icon: 'fluent:cloud-arrow-up-20-regular',
+    onClick: () => {
+      const id = publish(page.value)
+      router.push(`/screen?id=${id}`)
+    },
+  },
   { title: '导入', icon: 'fluent:arrow-upload-20-regular', onClick: () => importFileInput.value?.click() },
   {
     title: '导出',

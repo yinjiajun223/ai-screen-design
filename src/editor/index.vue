@@ -33,15 +33,23 @@ import PropertyPanel from './panels/property.vue'
 import MaterialPanel from './panels/material.vue'
 import ToolbarLeft from '@/editor/toolbar/toolbarLeft.vue'
 import ToolbarRight from '@/editor/toolbar/toolbarRight.vue'
+import { getPublishPage } from '@/utils/publish'
 
 const { panelVisible } = storeToRefs(useEditorStore())
 
 defineOptions({
   name: 'ScreenEditor',
 })
-
+const route = useRoute()
+const pageId = route.query.id as string
 const editorStore = useEditorStore()
 const { dataSources } = storeToRefs(editorStore)
+
+if (pageId) {
+  // 如果有 id，则从 localStorage 中获取数据，传给 store
+  const page = getPublishPage(pageId)
+  editorStore.setPage(page)
+}
 
 provide('dataSources', dataSources)
 </script>
