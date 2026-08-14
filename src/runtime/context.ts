@@ -11,6 +11,7 @@ interface RuntimeContext {
   // trigger('123','refresh') => 触发123这个组件ref实例的refresh方法
   trigger(id: string, eventName: string, ...args: any[]): any // 触发节点事件
   refreshNodesByDataId(dataId: string, ...args: any[]): void // 通过dataId刷新所有组件中的数据
+  dispatch(id: string, eventName: string, ...args: any[]): void // 派发事件
 }
 
 export const createRuntimeContext = (page: Ref<PageSchema>): RuntimeContext => {
@@ -56,5 +57,17 @@ export const createRuntimeContext = (page: Ref<PageSchema>): RuntimeContext => {
     })
   }
 
-  return { getNode, setAttribute, setProp, setStyle, registerNodeInstance, trigger, refreshNodesByDataId }
+  const dispatch: RuntimeContext['dispatch'] = (id, eventName, payload?: any) => {
+    const node = getNode(id)
+    if (!node) return console.warn(`节点不存在，id: ${id}`)
+
+    const event = node.events?.find((event) => event.name === eventName)
+    if (!event) return console.warn(`节点事件不存在，id: ${id}, eventName: ${eventName}`)
+    // 如果事件有处理函数，则直接调用处理函数
+    if (event.handler) {
+      return event.handler(payload)
+    }
+  }
+
+  return { getNode, setAttribute, setProp, setStyle, registerNodeInstance, trigger, refreshNodesByDataId, dispatch }
 }

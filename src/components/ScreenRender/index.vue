@@ -88,9 +88,14 @@ const createEvents = (node: MaterialSchema) => {
   const events = node.events || []
 
   events.forEach((event) => {
-    listeners[event.type] = () => {
-      const fn = new Function('$context', '$node', event.code)
-      fn(context, node) // 执行函数体，确保函数体中的代码可以访问到当前作用域的变量
+    if (event.handler) {
+      // 第二次渲染时，直接使用之前创建的事件处理函数，避免重复创建
+      listeners[event.type] = event.handler
+      return
+    }
+    event.handler = listeners[event.type] = (payload?: any) => {
+      const fn = new Function('$context', '$node', '$payload', event.code)
+      fn(context, node, payload) // 执行函数体，确保函数体中的代码可以访问到当前作用域的变量
     }
   })
 

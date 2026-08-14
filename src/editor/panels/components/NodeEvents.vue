@@ -12,7 +12,7 @@
         >
           <button class="data-event-list__select" type="button" @click="selectEvent(item)">
             <span class="data-event-list__indicator"></span>
-            <span class="data-event-list__name">{{ item.name }}</span>
+            <span class="data-event-list__name">{{ item.title }}</span>
           </button>
           <button
             v-if="activeEvent?.name === item.name"
@@ -27,8 +27,10 @@
       </div>
     </div>
     <div class="data-event-content">
-      <el-form v-if="activeEvent">
-        <el-form-item label="名称"><el-input v-model="activeEvent.name"></el-input> </el-form-item>
+      <el-form v-if="activeEvent" label-width="70">
+        <el-form-item label="事件标题"><el-input v-model="activeEvent.title"></el-input> </el-form-item>
+
+        <el-form-item label="函数名称"><el-input v-model="activeEvent.name"></el-input> </el-form-item>
 
         <el-form-item label="类型">
           <el-input v-model="activeEvent.type"></el-input>
@@ -36,7 +38,7 @@
 
         <el-form-item label="函数体">
           <div class="event-code-editor">
-            <div class="event-code-editor__signature">function ($context, $node) {</div>
+            <div class="event-code-editor__signature">function {{ activeEvent.name }}($context, $node, $payload) {</div>
             <MonacoEditor v-model="activeEvent.code" class="event-code-editor__monaco" lang="javascript" />
             <div class="event-code-editor__signature">}</div>
           </div>
@@ -70,6 +72,7 @@ const onAdd = () => {
     name: '未命名',
     type: '',
     code: '',
+    title: '未命名',
   })
 
   selectEvent(data.value.at(-1))
@@ -255,12 +258,6 @@ defineExpose({
       flex: 0 0 320px;
       height: 320px;
       margin-bottom: 0;
-    }
-
-    :deep(.el-form-item:last-child .el-form-item__label) {
-      justify-content: flex-start;
-      height: 22px;
-      line-height: 22px;
     }
 
     :deep(.el-form-item:last-child .el-form-item__content) {

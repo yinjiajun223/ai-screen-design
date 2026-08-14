@@ -9,6 +9,9 @@ export interface MaterialEvent {
   type: string // 事件类型 'click' | 'hover' | 'change' | 'submit' | 'custom'
   name: string // 事件名称
   code: string // 事件代码 函数体
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  handler?: Function // 事件处理函数
+  title: string // 事件标题
 }
 
 export interface MaterialSchema {
