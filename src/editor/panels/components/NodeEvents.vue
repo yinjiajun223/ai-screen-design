@@ -28,6 +28,20 @@
     </div>
     <div class="data-event-content">
       <el-form v-if="activeEvent" label-width="70">
+        <div class="event-action-controls">
+          <el-select class="event-action-controls__node" placeholder="复制节点 ID" @change="copyNodeId">
+            <el-option v-for="node in nodes" :key="node.id" :label="node.name" :value="node.id"></el-option>
+          </el-select>
+
+          <el-cascader
+            class="event-action-controls__dispatch"
+            v-model="dispatchEvent"
+            placeholder="触发事件"
+            :options="dispatchOptions"
+            @change="insertDispatchCode"
+          ></el-cascader>
+        </div>
+
         <el-form-item label="事件标题"><el-input v-model="activeEvent.title"></el-input> </el-form-item>
 
         <el-form-item label="函数名称"><el-input v-model="activeEvent.name"></el-input> </el-form-item>
@@ -55,14 +69,26 @@ import MonacoEditor from '@/components/MonacoEditor/index.vue'
 import { deepClone } from '@/utils'
 import { Icon } from '@iconify/vue'
 import type { MaterialEvent } from '@/schema/materials'
+import { ElMessage } from 'element-plus'
 
 defineOptions({
   name: 'NodeEvents',
 })
 
 const editorStore = useEditorStore()
-const { selectedNode } = storeToRefs(editorStore)
-const activeEvent = ref()
+const { selectedNode, nodes } = storeToRefs(editorStore)
+const activeEvent = ref<MaterialEvent>()
+const dispatchEvent = ref<[string, string]>()
+const dispatchOptions = computed(() => {
+  return nodes.value.map((node) => ({
+    label: node.name,
+    value: node.id,
+    children: node.events?.map((event) => ({
+      label: event.title,
+      value: event.name,
+    })),
+  }))
+})
 
 // 深拷贝事件列表
 const data = ref(deepClone(selectedNode.value.events || []))
@@ -88,6 +114,25 @@ const onRemove = (name: string) => {
 
 const selectEvent = (event: MaterialEvent) => {
   activeEvent.value = event
+}
+
+const copyNodeId = (nodeId: string) => {
+  // 只支持https协议的页面才能使用navigator.clipboard.writeText方法
+  navigator.clipboard.writeText(nodeId).then(() => {
+    ElMessage.success('节点 ID 已复制到剪贴板')
+  })
+}
+
+const insertDispatchCode = ([nodeId, eventName]: [string, string]) => {
+  if (!activeEvent.value) return
+
+  const code = `// 派发事件\n$context.dispatch('${nodeId}', '${eventName}', $payload)\n`
+  activeEvent.value.code += code
+
+  // 延后赋值 否则会被级联选择器内部覆盖
+  nextTick(() => {
+    dispatchEvent.value = undefined
+  })
 }
 
 defineExpose({
@@ -249,6 +294,22 @@ defineExpose({
     :deep(.el-form-item__label) {
       color: var(--editor-text-muted);
       font-size: 13px;
+    }
+
+    .event-action-controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 18px;
+
+      &__node {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+
+      &__dispatch {
+        flex: 1 1 0;
+        min-width: 0;
+      }
     }
 
     :deep(.el-form-item:last-child) {
