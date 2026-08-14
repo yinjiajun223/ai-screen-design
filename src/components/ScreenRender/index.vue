@@ -11,6 +11,7 @@
 <script lang="ts" setup>
 import { getMaterialComponent } from '@/materials/index'
 import { createRuntimeContext } from '@/runtime/context'
+import { runSandBox } from '@/runtime/sandbox'
 import type { MaterialSchema } from '@/schema/materials'
 import type { PageSchema } from '@/schema/page'
 
@@ -94,8 +95,10 @@ const createEvents = (node: MaterialSchema) => {
       return
     }
     event.handler = listeners[event.type] = (payload?: any) => {
-      const fn = new Function('$context', '$node', '$payload', event.code)
-      fn(context, node, payload) // 执行函数体，确保函数体中的代码可以访问到当前作用域的变量
+      // 走沙箱环境 避免污染全局作用域
+      runSandBox(event.code, { $context: context, $node: node, $payload: payload })
+      // const fn = new Function('$context', '$node', '$payload', event.code)
+      // fn(context, node, payload) // 执行函数体，确保函数体中的代码可以访问到当前作用域的变量
     }
   })
 
