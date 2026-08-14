@@ -33,6 +33,10 @@ interface SetterSchema {
   [key: string]: any
 }
 
+interface EventOption {
+  label: string
+  value: string
+}
 export interface MaterialsDefinition {
   name: string
   icon: string
@@ -40,4 +44,5 @@ export interface MaterialsDefinition {
   group: string
   schema?: Omit<MaterialSchema, 'id'>
   setters?: SetterSchema[]
+  eventOptions: EventOption[]
 }

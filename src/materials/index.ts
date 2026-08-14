@@ -1,5 +1,5 @@
 import type { Component } from 'vue'
-import type { MaterialsDefinition } from '../schema/materials'
+import type { MaterialSchema, MaterialsDefinition } from '../schema/materials'
 
 const materials: MaterialsDefinition[] = []
 
@@ -8,21 +8,19 @@ const groups = [
   { name: '信息', icon: 'material-symbols:info-outline', key: 'info' },
 ]
 const componentMap = new Map()
-const settersMap = new Map()
+const materialMap = new Map()
 
 export const register = (material: MaterialsDefinition, component: Component) => {
   materials.push(material)
   componentMap.set(material.schema.type, component)
-
-  if (material.setters) {
-    settersMap.set(material.schema.type, material.setters)
-  }
+  materialMap.set(material.schema.type, material)
 }
 export const getMerialsByGroup = (group: string) => materials.filter((material) => material.group === group)
 export const getGroups = () => groups
 export const getMaterialComponent = (type: string) => componentMap.get(type)
-export const getMaterialSetters = (type: string) => settersMap.get(type)
-export const createNode = (node) => ({ ...node, id: crypto.randomUUID() })
+export const getMaterialSetters = (type: string) => materialMap.get(type)?.setters || []
+export const getMaterialEventOptions = (type: string) => materialMap.get(type)?.eventOptions || []
+export const createNode = (node: Omit<MaterialSchema, 'id'>) => ({ ...node, id: crypto.randomUUID() })
 
 // 注册所有的物料
 const materialsModule = import.meta.glob('./*/index.ts', { eager: true })

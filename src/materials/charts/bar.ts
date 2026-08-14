@@ -1,9 +1,11 @@
 import type { MaterialsDefinition } from '@/schema/materials'
+import { commonEventOptions } from '@/materials/eventOptions'
 
 export const barMaterial: MaterialsDefinition = {
   name: '柱状图',
   group: 'charts',
   icon: 'streamline-stickies-color:graph-bar',
+  eventOptions: commonEventOptions,
   setters: [
     {
       type: 'input',

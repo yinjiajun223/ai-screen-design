@@ -1,10 +1,12 @@
 import type { MaterialsDefinition } from '@/schema/materials'
+import { commonEventOptions } from '@/materials/eventOptions'
 
 export const funnelMaterial: MaterialsDefinition = {
   name: '漏斗图',
   group: 'charts',
   icon: 'tabler:chart-funnel-filled',
   iconColor: '#f59e0b',
+  eventOptions: commonEventOptions,
   setters: [
     {
       type: 'input',

@@ -1,9 +1,11 @@
 import type { MaterialsDefinition } from '@/schema/materials'
+import { commonEventOptions } from '@/materials/eventOptions'
 
 export const scatterMaterial: MaterialsDefinition = {
   name: '散点图',
   group: 'charts',
   icon: 'fluent-color:data-scatter-24',
+  eventOptions: commonEventOptions,
   setters: [
     {
       type: 'input',

@@ -1,4 +1,5 @@
 import type { MaterialsDefinition } from '../../schema/materials'
+import { commonEventOptions } from '../eventOptions'
 import TextMetrial from './compoent.vue'
 
 // 物料元数据
@@ -37,6 +38,7 @@ const textMaterials: MaterialsDefinition = {
       },
     ],
   },
+  eventOptions: [...commonEventOptions, { label: 'foo', value: 'foo' }],
 }
 
 export const install = (register) => {

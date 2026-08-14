@@ -1,10 +1,12 @@
 import type { MaterialsDefinition } from '@/schema/materials'
+import { commonEventOptions } from '@/materials/eventOptions'
 
 export const barHorizontalMaterial: MaterialsDefinition = {
   name: '条形图',
   group: 'charts',
   icon: 'ph:chart-bar-horizontal-duotone',
   iconColor: '#22d3ee',
+  eventOptions: commonEventOptions,
   setters: [
     {
       type: 'input',

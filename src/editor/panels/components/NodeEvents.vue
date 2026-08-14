@@ -47,7 +47,13 @@
         <el-form-item label="函数名称"><el-input v-model="activeEvent.name"></el-input> </el-form-item>
 
         <el-form-item label="类型">
-          <el-input v-model="activeEvent.type"></el-input>
+          <el-select
+            placeholder="请选择事件名称"
+            v-model="activeEvent.type"
+            allow-create
+            filterable
+            :options="eventOptions"
+          ></el-select>
         </el-form-item>
 
         <el-form-item label="函数体">
@@ -70,6 +76,7 @@ import { deepClone } from '@/utils'
 import { Icon } from '@iconify/vue'
 import type { MaterialEvent } from '@/schema/materials'
 import { ElMessage } from 'element-plus'
+import { getMaterialEventOptions } from '@/materials'
 
 defineOptions({
   name: 'NodeEvents',
@@ -79,6 +86,7 @@ const editorStore = useEditorStore()
 const { selectedNode, nodes } = storeToRefs(editorStore)
 const activeEvent = ref<MaterialEvent>()
 const dispatchEvent = ref<[string, string]>()
+const eventOptions = computed(() => getMaterialEventOptions(selectedNode.value?.type || ''))
 const dispatchOptions = computed(() => {
   return nodes.value.map((node) => ({
     label: node.name,
