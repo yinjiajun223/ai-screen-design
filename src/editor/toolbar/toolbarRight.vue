@@ -1,6 +1,13 @@
 <template>
   <div class="toolbar-right flex justify-end gap-20">
-    <button v-for="item in toolbarItems" :key="item.icon" :title="item.title" type="button" @click="item.onClick">
+    <button
+      v-for="item in toolbarItems"
+      :key="item.icon"
+      :class="{ active: item.panel && panelVisible[item.panel] }"
+      :title="item.title"
+      type="button"
+      @click="item.onClick"
+    >
       <Icon :icon="item.icon" />
     </button>
 
@@ -53,14 +60,30 @@ defineOptions({
 })
 
 const editorStore = useEditorStore()
-const { page } = storeToRefs(editorStore)
+const { page, panelVisible } = storeToRefs(editorStore)
 const router = useRouter()
 const importFileInput = useTemplateRef<HTMLInputElement>('importFileInput')
 const dataSourceManagerRef = useTemplateRef<InstanceType<typeof DataSourceManager>>('dataSourceManagerRef')
 const dataSourceVisible = ref(false)
 const visible = ref(false)
 const jsonText = ref('')
-const toolbarItems = [
+
+type PanelName = keyof typeof panelVisible.value
+
+interface ToolbarItem {
+  title: string
+  icon: string
+  panel?: PanelName
+  onClick: () => void
+}
+
+const toolbarItems: ToolbarItem[] = [
+  {
+    title: 'AI 面板',
+    icon: 'fluent:bot-20-regular',
+    panel: 'ai',
+    onClick: () => togglePanel('ai'),
+  },
   {
     title: '数据源配置',
     icon: 'fluent:data-pie-20-regular',
@@ -106,6 +129,10 @@ const toolbarItems = [
     },
   },
 ]
+
+function togglePanel(panel: PanelName) {
+  panelVisible.value[panel] = !panelVisible.value[panel]
+}
 
 const onImportFileChange = (event: Event) => {
   const input = event.target as HTMLInputElement
@@ -171,6 +198,12 @@ const onSave = () => {
   &:focus-visible {
     outline: 2px solid var(--editor-accent);
     outline-offset: 2px;
+  }
+
+  &.active {
+    color: var(--editor-accent);
+    background: color-mix(in srgb, var(--editor-accent) 12%, var(--editor-control));
+    border-color: var(--editor-border-hover);
   }
 }
 

@@ -20,6 +20,10 @@
       <Transition name="panel">
         <PropertyPanel v-show="panelVisible.property" class="editor-panel w-360 border-l border-(--editor-border)" />
       </Transition>
+      <!--  AI   -->
+      <Transition name="panel">
+        <AIPanel v-show="panelVisible.ai" class="editor-panel w-300 border-l border-(--editor-border)" />
+      </Transition>
     </main>
   </div>
 </template>
@@ -34,6 +38,7 @@ import MaterialPanel from './panels/material.vue'
 import ToolbarLeft from '@/editor/toolbar/toolbarLeft.vue'
 import ToolbarRight from '@/editor/toolbar/toolbarRight.vue'
 import { getPublishPage } from '@/utils/publish'
+import AIPanel from './panels/ai/index.vue'
 
 const { panelVisible } = storeToRefs(useEditorStore())
 
