@@ -56,12 +56,12 @@ defineProps<{
     }
 
     .message-avatar {
-      color: #fff;
+      color: var(--editor-accent-contrast);
       background: var(--editor-accent);
     }
 
     .message-content {
-      color: #fff;
+      color: var(--editor-accent-contrast);
       background: var(--editor-accent);
       border-color: var(--editor-accent);
       border-radius: 12px 3px 12px 12px;

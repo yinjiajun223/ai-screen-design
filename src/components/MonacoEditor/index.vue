@@ -7,6 +7,8 @@ import { editor } from 'monaco-editor'
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker.js?worker'
 import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker.js?worker'
 import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker.js?worker'
+import { useThemeStore } from '@/stores/theme'
+import { storeToRefs } from 'pinia'
 
 defineOptions({
   name: 'MonacoEditor',
@@ -24,12 +26,13 @@ window.MonacoEnvironment = {
 const props = defineProps<{ lang?: string }>()
 const modeValue = defineModel<string>()
 const editorRef = useTemplateRef<HTMLDivElement>('editorRef')
+const { resolvedMode } = storeToRefs(useThemeStore())
 let instance
 onMounted(() => {
   console.log('props.lang', props.lang)
   instance = editor.create(editorRef.value, {
     value: modeValue.value,
-    theme: 'vs-dark',
+    theme: resolvedMode.value === 'dark' ? 'vs-dark' : 'vs',
     tabSize: 2,
     fontSize: 14,
     language: props.lang || 'json',
@@ -50,6 +53,10 @@ watch(modeValue, (newValue) => {
   if (instance && instance.getValue() === newValue) return
 
   instance.setValue(newValue)
+})
+
+watch(resolvedMode, (value) => {
+  editor.setTheme(value === 'dark' ? 'vs-dark' : 'vs')
 })
 </script>
 

@@ -1,5 +1,7 @@
 <template>
-  <div class="toolbar-right flex justify-end gap-20">
+  <div class="toolbar-right flex justify-end gap-8">
+    <ThemeSettings />
+
     <button
       v-for="item in toolbarItems"
       :key="item.icon"
@@ -53,6 +55,7 @@ import MonacoEditor from '@/components/MonacoEditor/index.vue'
 import { useEditorStore } from '@/stores/editor'
 import { storeToRefs } from 'pinia'
 import DataSourceManager from './components/DataSourceManager.vue'
+import ThemeSettings from './components/ThemeSettings.vue'
 import { publish } from '@/utils/publish'
 
 defineOptions({
