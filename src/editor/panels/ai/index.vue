@@ -10,11 +10,18 @@
       </div>
     </header>
 
-    <MessageList class="ai-panel__messages" :messages="messages" />
+    <MessageList class="ai-panel__messages" :messages="messages" :loading="isLoading" />
 
     <footer class="ai-composer">
-      <el-input v-model="message" type="textarea" :rows="3" resize="none" placeholder="输入你的设计需求…" />
-      <el-button class="ai-composer__send" type="primary">
+      <el-input
+        v-model="message"
+        type="textarea"
+        :rows="3"
+        resize="none"
+        placeholder="输入你的设计需求…"
+        @keydown.enter="onKeydown"
+      />
+      <el-button class="ai-composer__send" type="primary" :loading="isLoading" @click="onSubmit()">
         <span>发送</span>
         <Icon icon="fluent:send-20-filled" />
       </el-button>
@@ -23,23 +30,43 @@
 </template>
 
 <script lang="ts" setup>
+import { useStream } from '@langchain/vue'
 import MessageList from './components/MessageList.vue'
-
-interface Message {
-  id: string
-  type: 'human' | 'ai'
-  text: string
-}
 
 defineOptions({
   name: 'AiPanel',
 })
 
 const message = ref('')
-const messages = ref<Message[]>([
-  { type: 'human', text: '你好', id: crypto.randomUUID() },
-  { type: 'ai', text: '你好，我是AI助手，请问有什么可以帮您的吗？', id: crypto.randomUUID() },
-])
+
+const { messages, submit, isLoading } = useStream({
+  apiUrl: 'http://localhost:2024',
+  assistantId: 'screen_design_agent',
+  // transport: 'websocket', // 默认 SSE
+})
+
+const onSubmit = () => {
+  if (isLoading.value || !message.value.trim()) return
+
+  console.log('message', message)
+  submit({
+    messages: [{ type: 'human', content: message.value }],
+  })
+
+  message.value = ''
+}
+
+const onKeydown = (event: KeyboardEvent) => {
+  // 这里主要解决在输入法状态下按下回车键时触发提交的问题
+  if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return
+
+  event.preventDefault()
+  onSubmit()
+}
+
+watch(messages, (value) => {
+  console.log('value', value)
+})
 </script>
 
 <style lang="scss" scoped>

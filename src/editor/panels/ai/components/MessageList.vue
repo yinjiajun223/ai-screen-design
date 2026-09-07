@@ -1,8 +1,8 @@
 <template>
   <div class="message-container">
     <div
-      v-for="message in messages"
-      :key="message.id"
+      v-for="(message, index) in messages"
+      :key="message.id ?? index"
       class="message-box"
       :class="`message-box--${message.type}`"
     >
@@ -12,25 +12,31 @@
 
       <div class="message-main">
         <span class="message-author">{{ message.type === 'human' ? '你' : 'AI 助手' }}</span>
-        <div class="message-content">{{ message.text }}</div>
+        <div class="message-content">
+          <span v-if="loading && message.type === 'ai' && !message.text" class="message-loading" aria-label="正在生成回复">
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+          <template v-else>{{ message.text }}</template>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-interface Message {
-  id: string
-  type: 'human' | 'ai'
-  text: string
-}
+import type { UseStreamResult } from '@langchain/vue'
+
+type StreamMessages = UseStreamResult['messages']['value']
 
 defineOptions({
   name: 'MessageList',
 })
 
 defineProps<{
-  messages: Message[]
+  messages: StreamMessages
+  loading: boolean
 }>()
 </script>
 
@@ -121,6 +127,49 @@ defineProps<{
   &::selection {
     color: var(--editor-text);
     background: color-mix(in srgb, var(--editor-accent) 45%, transparent);
+  }
+}
+
+.message-loading {
+  display: inline-flex;
+  height: 20px;
+  align-items: center;
+  gap: 4px;
+
+  i {
+    width: 5px;
+    height: 5px;
+    background: var(--editor-text-muted);
+    border-radius: 50%;
+    animation: message-loading 1.2s ease-in-out infinite;
+
+    &:nth-child(2) {
+      animation-delay: 150ms;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 300ms;
+    }
+  }
+}
+
+@keyframes message-loading {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message-loading i {
+    animation: none;
   }
 }
 </style>
