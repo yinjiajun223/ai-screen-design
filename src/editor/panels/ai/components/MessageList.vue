@@ -1,7 +1,7 @@
 <template>
   <div class="message-container">
     <div
-      v-for="(message, index) in messages"
+      v-for="(message, index) in visibleMessages"
       :key="message.id ?? index"
       class="message-box"
       :class="`message-box--${message.type}`"
@@ -18,7 +18,18 @@
             <i></i>
             <i></i>
           </span>
-          <template v-else>{{ message.text }}</template>
+          <template v-else>
+            <MarkdownRender
+              v-if="message.text"
+              :render-code-blocks-as-pre="false"
+              :code-block-props="codeBlockProps"
+              :content="message.text"
+              mode="chat"
+              html-policy="escape"
+              :final="true"
+            />
+            <span v-else class="typing">...</span>
+          </template>
         </div>
       </div>
     </div>
@@ -27,17 +38,37 @@
 
 <script lang="ts" setup>
 import type { UseStreamResult } from '@langchain/vue'
+import MarkdownRender from 'markstream-vue'
+import 'markstream-vue/index.css'
 
 type StreamMessages = UseStreamResult['messages']['value']
+
+const codeBlockProps = {
+  showCopyButton: true,
+  monacoOptions: {
+    MAX_HEIGHT: 280,
+    fontSize: 12,
+    lineHeight: 18,
+  },
+}
 
 defineOptions({
   name: 'MessageList',
 })
 
-defineProps<{
+const props = defineProps<{
   messages: StreamMessages
   loading: boolean
 }>()
+
+const visibleMessages = computed(() => {
+  const lastIndex = props.messages.length - 1
+
+  return props.messages.filter((message, index) => {
+    // 最后一条消息如果是 AI 消息且正在加载，则显示 loading 状态
+    return message.text || (index === lastIndex && props.loading)
+  })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -127,6 +158,30 @@ defineProps<{
   &::selection {
     color: var(--editor-text);
     background: color-mix(in srgb, var(--editor-accent) 45%, transparent);
+  }
+
+  :deep(.markstream-vue) {
+    min-width: 0;
+    max-width: 100%;
+    --ms-text-body: 13px;
+    --ms-leading-body: 1.65;
+    --ms-text-h1: 18px;
+    --ms-text-h2: 16px;
+    --ms-text-h3: 14px;
+    --ms-text-h4: 13px;
+    --ms-text-h5: 13px;
+    --ms-text-h6: 13px;
+    --ms-text-label: 11px;
+    --ms-flow-paragraph-y: 0.65em;
+    --ms-flow-list-y: 0.6em;
+    --ms-flow-table-y: 0.8em;
+    --ms-flow-codeblock-y: 0.8em;
+    --ms-flow-blockquote-y: 0.8em;
+    --ms-flow-heading-1-mb: 0.55em;
+    --ms-flow-heading-2-mt: 1.1em;
+    --ms-flow-heading-2-mb: 0.5em;
+    --ms-flow-heading-3-mt: 0.9em;
+    --ms-flow-heading-3-mb: 0.4em;
   }
 }
 

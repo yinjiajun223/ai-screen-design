@@ -8,9 +8,12 @@
         <h2>AI 助手</h2>
         <p>描述你想创建或调整的画面</p>
       </div>
+      <button class="ai-panel__delete" type="button" @click="onDelete">删除</button>
     </header>
 
-    <MessageList class="ai-panel__messages" :messages="messages" :loading="isLoading" />
+    <div ref="messagesContainer" class="ai-panel__messages" @scroll.passive="onMessagesScroll">
+      <MessageList :messages="messages" :loading="isLoading" />
+    </div>
 
     <footer class="ai-composer">
       <el-input
@@ -21,9 +24,14 @@
         placeholder="输入你的设计需求…"
         @keydown.enter="onKeydown"
       />
-      <el-button class="ai-composer__send" type="primary" :loading="isLoading" @click="onSubmit()">
+      <el-button v-if="!isLoading" class="ai-composer__send" type="primary" @click="onSubmit()">
         <span>发送</span>
         <Icon icon="fluent:send-20-filled" />
+      </el-button>
+
+      <el-button v-else class="ai-composer__send" type="danger" @click="onStop()">
+        <span>停止</span>
+        <Icon icon="fluent:stop-20-filled" />
       </el-button>
     </footer>
   </div>
@@ -32,28 +40,51 @@
 <script lang="ts" setup>
 import { useStream } from '@langchain/vue'
 import MessageList from './components/MessageList.vue'
+import { clearThreadId, getThreadId, setThreadId } from './thread-storage'
 
 defineOptions({
   name: 'AiPanel',
 })
 
 const message = ref('')
+const messagesContainer = ref<HTMLElement | null>(null)
+const shouldAutoScroll = ref(true)
+const activeThreadId = ref(getThreadId())
+let messagesResizeObserver: ResizeObserver | undefined
 
-const { messages, submit, isLoading } = useStream({
+const BOTTOM_THRESHOLD = 4
+
+const { messages, submit, stop, isLoading, client } = useStream({
   apiUrl: 'http://localhost:2024',
   assistantId: 'screen_design_agent',
   // transport: 'websocket', // 默认 SSE
+  threadId: activeThreadId,
+  onThreadId: (threadId) => {
+    setThreadId(threadId)
+  },
 })
 
-const onSubmit = () => {
+const onSubmit = async () => {
   if (isLoading.value || !message.value.trim()) return
 
-  console.log('message', message)
+  scrollToBottom()
+
   submit({
     messages: [{ type: 'human', content: message.value }],
   })
 
   message.value = ''
+}
+
+const onStop = async () => {
+  await stop()
+}
+
+const onDelete = async () => {
+  const id = getThreadId()
+  await client.threads.delete(id)
+  clearThreadId()
+  location.reload()
 }
 
 const onKeydown = (event: KeyboardEvent) => {
@@ -64,7 +95,37 @@ const onKeydown = (event: KeyboardEvent) => {
   onSubmit()
 }
 
-watch(messages, (value) => {
+const scrollToBottom = () => {
+  if (!shouldAutoScroll.value || !messagesContainer.value) return
+
+  messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+}
+
+const onMessagesScroll = () => {
+  if (!messagesContainer.value) return
+
+  const { scrollHeight, scrollTop, clientHeight } = messagesContainer.value
+  shouldAutoScroll.value = scrollHeight - scrollTop - clientHeight <= BOTTOM_THRESHOLD
+}
+
+onMounted(() => {
+  if (!messagesContainer.value) return
+
+  messagesResizeObserver = new ResizeObserver(scrollToBottom)
+  messagesResizeObserver.observe(messagesContainer.value)
+
+  if (messagesContainer.value.firstElementChild) {
+    messagesResizeObserver.observe(messagesContainer.value.firstElementChild)
+  }
+
+  scrollToBottom()
+})
+
+onBeforeUnmount(() => {
+  messagesResizeObserver?.disconnect()
+})
+
+watch(messages, async (value) => {
   console.log('value', value)
 })
 </script>
@@ -121,6 +182,46 @@ watch(messages, (value) => {
   svg {
     width: 16px;
     height: 16px;
+  }
+}
+
+.ai-panel__delete {
+  display: inline-flex;
+  height: 28px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  padding: 0 10px;
+  color: var(--el-color-danger);
+  font-size: 12px;
+  background: color-mix(in srgb, var(--el-color-danger) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--el-color-danger) 30%, transparent);
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease;
+
+  &:not(:disabled):hover {
+    color: var(--el-color-white, #fff);
+    background: var(--el-color-danger);
+    border-color: var(--el-color-danger);
+  }
+
+  &:not(:disabled):active {
+    opacity: 0.85;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--el-color-danger);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
   }
 }
 

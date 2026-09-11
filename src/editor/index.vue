@@ -22,7 +22,7 @@
       </Transition>
       <!--  AI   -->
       <Transition name="panel">
-        <AIPanel v-show="panelVisible.ai" class="editor-panel w-300 border-l border-(--editor-border)" />
+        <AIPanel v-show="panelVisible.ai" class="editor-panel w-360 border-l border-(--editor-border)" />
       </Transition>
     </main>
   </div>
