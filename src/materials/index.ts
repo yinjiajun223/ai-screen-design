@@ -22,6 +22,16 @@ export const getMaterialSetters = (type: string) => materialMap.get(type)?.sette
 export const getMaterialEventOptions = (type: string) => materialMap.get(type)?.eventOptions || []
 export const createNode = (node: Omit<MaterialSchema, 'id'>) => ({ ...node, id: crypto.randomUUID() })
 
+export const getAllMaterialSchemas = () => {
+  return materials.map((material) => {
+    return {
+      type: material.schema.type,
+      name: material.name,
+      configSchema: material.configSchema.toJSONSchema(),
+    }
+  })
+}
+
 // 注册所有的物料
 const materialsModule = import.meta.glob('./*/index.ts', { eager: true })
 Object.values(materialsModule).forEach((module) => {

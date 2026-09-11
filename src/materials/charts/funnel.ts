@@ -1,5 +1,6 @@
 import type { MaterialsDefinition } from '@/schema/materials'
 import { commonEventOptions } from '@/materials/eventOptions'
+import { FunnelChartSchema } from './schema'
 
 export const funnelMaterial: MaterialsDefinition = {
   name: '漏斗图',
@@ -7,6 +8,7 @@ export const funnelMaterial: MaterialsDefinition = {
   icon: 'tabler:chart-funnel-filled',
   iconColor: '#f59e0b',
   eventOptions: commonEventOptions,
+  configSchema: FunnelChartSchema,
   setters: [
     {
       type: 'input',

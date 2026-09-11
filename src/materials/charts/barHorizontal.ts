@@ -1,5 +1,6 @@
 import type { MaterialsDefinition } from '@/schema/materials'
 import { commonEventOptions } from '@/materials/eventOptions'
+import { BarHorizontalChartSchema } from './schema'
 
 export const barHorizontalMaterial: MaterialsDefinition = {
   name: '条形图',
@@ -7,6 +8,7 @@ export const barHorizontalMaterial: MaterialsDefinition = {
   icon: 'ph:chart-bar-horizontal-duotone',
   iconColor: '#22d3ee',
   eventOptions: commonEventOptions,
+  configSchema: BarHorizontalChartSchema,
   setters: [
     {
       type: 'input',

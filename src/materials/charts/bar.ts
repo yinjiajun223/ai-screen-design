@@ -1,11 +1,13 @@
 import type { MaterialsDefinition } from '@/schema/materials'
 import { commonEventOptions } from '@/materials/eventOptions'
+import { BarChartSchema } from './schema'
 
 export const barMaterial: MaterialsDefinition = {
   name: '柱状图',
   group: 'charts',
   icon: 'streamline-stickies-color:graph-bar',
   eventOptions: commonEventOptions,
+  configSchema: BarChartSchema,
   setters: [
     {
       type: 'input',

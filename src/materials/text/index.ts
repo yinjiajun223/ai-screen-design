@@ -1,6 +1,7 @@
 import type { MaterialsDefinition } from '../../schema/materials'
 import { commonEventOptions } from '../eventOptions'
 import TextMetrial from './compoent.vue'
+import { TextSchema } from './schema'
 
 // 物料元数据
 // text => TextMaterial
@@ -8,6 +9,7 @@ const textMaterials: MaterialsDefinition = {
   name: '文本',
   group: 'info',
   icon: 'solar:text-bold',
+  configSchema: TextSchema,
   setters: [
     { type: 'input', label: '文本内容', key: 'props.content' },
     { type: 'color', label: '颜色', key: 'style.color' },

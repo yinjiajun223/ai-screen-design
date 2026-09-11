@@ -1,11 +1,13 @@
 import type { MaterialsDefinition } from '@/schema/materials.ts'
 import { commonEventOptions } from '@/materials/eventOptions'
+import { PieChartSchema } from './schema'
 
 export const pieMaterial: MaterialsDefinition = {
   name: '饼图',
   group: 'charts',
   icon: 'streamline-stickies-color:graph-pie',
   eventOptions: commonEventOptions,
+  configSchema: PieChartSchema,
   setters: [
     {
       type: 'input',

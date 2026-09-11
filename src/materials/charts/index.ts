@@ -3,8 +3,8 @@ import type { MaterialsDefinition } from '@/schema/materials'
 
 type MaterialModule = Record<string, MaterialsDefinition>
 
-// 自动加载当前目录下所有图表物料定义，排除本入口文件。
-const materialModules = import.meta.glob<MaterialModule>(['./*.ts', '!./index.ts'], { eager: true })
+// 自动加载当前目录下所有图表物料定义，排除入口和 schema 文件。
+const materialModules = import.meta.glob<MaterialModule>(['./*.ts', '!./index.ts', '!./schema.ts'], { eager: true })
 const chartMaterials = Object.values(materialModules).flatMap((module) => Object.values(module))
 
 export const install = (register) => {

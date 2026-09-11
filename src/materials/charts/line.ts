@@ -1,11 +1,13 @@
 import type { MaterialsDefinition } from '@/schema/materials.ts'
 import { commonEventOptions } from '@/materials/eventOptions'
+import { LineChartSchema } from './schema'
 
 export const lineMaterial: MaterialsDefinition = {
   name: '折线图',
   group: 'charts',
   icon: 'streamline-stickies-color:rocket-launch-chart',
   eventOptions: commonEventOptions,
+  configSchema: LineChartSchema,
   setters: [
     {
       type: 'input',

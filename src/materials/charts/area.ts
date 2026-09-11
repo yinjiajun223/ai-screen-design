@@ -1,11 +1,13 @@
 import type { MaterialsDefinition } from '@/schema/materials'
 import { commonEventOptions } from '@/materials/eventOptions'
+import { AreaChartSchema } from './schema'
 
 export const areaMaterial: MaterialsDefinition = {
   name: '面积图',
   group: 'charts',
   icon: 'fluent-color:data-area-24',
   eventOptions: commonEventOptions,
+  configSchema: AreaChartSchema,
   setters: [
     {
       type: 'input',

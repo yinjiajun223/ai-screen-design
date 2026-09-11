@@ -41,6 +41,10 @@
 import { useStream } from '@langchain/vue'
 import MessageList from './components/MessageList.vue'
 import { clearThreadId, getThreadId, setThreadId } from './thread-storage'
+import { storeToRefs } from 'pinia'
+import { useEditorStore } from '@/stores/editor'
+import { getAllMaterialSchemas } from '@/materials'
+import { CanvasSchema } from '@/editor/schema/common'
 
 defineOptions({
   name: 'AiPanel',
@@ -54,6 +58,7 @@ let messagesResizeObserver: ResizeObserver | undefined
 
 const BOTTOM_THRESHOLD = 4
 
+const { page, selectedNodeIds } = storeToRefs(useEditorStore())
 const { messages, submit, stop, isLoading, client } = useStream({
   apiUrl: 'http://localhost:2024',
   assistantId: 'screen_design_agent',
@@ -71,6 +76,12 @@ const onSubmit = async () => {
 
   submit({
     messages: [{ type: 'human', content: message.value }],
+    page: page.value,
+    selectedNodeIds: selectedNodeIds.value,
+    schema: {
+      material: getAllMaterialSchemas(),
+      canvas: CanvasSchema.toJSONSchema(),
+    },
   })
 
   message.value = ''

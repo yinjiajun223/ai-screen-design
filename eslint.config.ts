@@ -26,6 +26,7 @@ export default defineConfigWithVueTs(
     name: 'app/rules',
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
     },
   },
 
