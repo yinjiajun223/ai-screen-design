@@ -58,8 +58,9 @@ let messagesResizeObserver: ResizeObserver | undefined
 
 const BOTTOM_THRESHOLD = 4
 
-const { page, selectedNodeIds } = storeToRefs(useEditorStore())
-const { messages, submit, stop, isLoading, client } = useStream({
+const editorStore = useEditorStore()
+const { page, selectedNodeIds } = storeToRefs(editorStore)
+const { messages, submit, stop, isLoading, client, values } = useStream({
   apiUrl: 'http://localhost:2024',
   assistantId: 'screen_design_agent',
   // transport: 'websocket', // 默认 SSE
@@ -93,8 +94,8 @@ const onStop = async () => {
 
 const onDelete = async () => {
   const id = getThreadId()
-  await client.threads.delete(id)
   clearThreadId()
+  await client.threads.delete(id)
   location.reload()
 }
 
@@ -136,9 +137,22 @@ onBeforeUnmount(() => {
   messagesResizeObserver?.disconnect()
 })
 
-watch(messages, async (value) => {
-  console.log('value', value)
-})
+// watch(messages, async (value) => {
+//   console.log('value', value)
+// })
+
+watch(
+  () => values.value.action,
+  (action: any) => {
+    if (!action) return
+    if (action?.type === 'add_node') {
+      const { node } = action
+
+      // toRaw 的原因是调整样式报错属性是 readonly 的 使用 toRaw 可以将其转换为普通对象
+      editorStore.addNode(toRaw(node))
+    }
+  },
+)
 </script>
 
 <style lang="scss" scoped>
