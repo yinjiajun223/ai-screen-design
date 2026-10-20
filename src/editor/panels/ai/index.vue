@@ -150,6 +150,9 @@ watch(
 
       // toRaw 的原因是调整样式报错属性是 readonly 的 使用 toRaw 可以将其转换为普通对象
       editorStore.addNode(toRaw(node))
+    } else if (action?.type === 'update_node') {
+      const { node } = action
+      editorStore.updateNode(node.id, toRaw(node))
     }
   },
 )
