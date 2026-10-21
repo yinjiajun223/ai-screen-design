@@ -55,7 +55,7 @@ const messagesContainer = ref<HTMLElement | null>(null)
 const shouldAutoScroll = ref(true)
 const activeThreadId = ref(getThreadId())
 let messagesResizeObserver: ResizeObserver | undefined
-
+const activeRunId = ref('')
 const BOTTOM_THRESHOLD = 4
 
 const editorStore = useEditorStore()
@@ -67,6 +67,9 @@ const { messages, submit, stop, isLoading, client, values } = useStream({
   threadId: activeThreadId,
   onThreadId: (threadId) => {
     setThreadId(threadId)
+  },
+  onCreated: ({ runId }) => {
+    activeRunId.value = runId
   },
 })
 
@@ -89,6 +92,7 @@ const onSubmit = async () => {
 }
 
 const onStop = async () => {
+  client.runs.cancel(getThreadId(), activeRunId.value, true, 'rollback')
   await stop()
 }
 

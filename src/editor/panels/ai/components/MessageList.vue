@@ -33,6 +33,20 @@
         </div>
       </div>
     </div>
+
+    <div v-if="showAILoading" class="message-box message-box--ai">
+      <el-avatar class="message-avatar" :size="28">AI</el-avatar>
+      <div class="message-main">
+        <span class="message-author">AI 助手</span>
+        <div class="message-content">
+          <span class="message-loading" aria-label="正在生成回复">
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -51,6 +65,12 @@ const codeBlockProps = {
     lineHeight: 18,
   },
 }
+
+const showAILoading = computed(() => {
+  if (!props.loading) return false
+
+  return props.messages.length > 0 && props.messages[props.messages.length - 1]?.type !== 'ai'
+})
 
 defineOptions({
   name: 'MessageList',
