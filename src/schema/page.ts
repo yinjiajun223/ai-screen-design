@@ -30,3 +30,9 @@ export interface DataSourceSchema {
   interval?: number // api 轮询的间隔时间，单位为毫秒
   params?: Record<string, any> // api 请求的参数
 }
+
+export enum ActionTypeEnum {
+  ADD_NODE = 'add_node',
+  REMOVE_NODE = 'remove_node',
+  UPDATE_NODE = 'update_node',
+}

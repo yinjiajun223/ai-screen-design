@@ -68,8 +68,16 @@ export const useEditorStore = defineStore('editor', () => {
   const findNodeById = (id: string) => nodes.value.find((node) => node.id === id)
   const clearSelected = () => (selectedNodeIds.value = [])
   const setNodes = (newNodes: MaterialSchema[]) => applyChange(nodes, 'value', newNodes) // 记录节点批量更新操作
-  const updateNode = (id: string, newNode: MaterialSchema) =>
-    setNodes(nodes.value.map((node) => (node.id === id ? newNode : node))) // 记录节点更新操作
+  const updateNode = (id: string, newNode: MaterialSchema) => {
+    // 兼容只传 newNode 的情况，id 直接从 newNode 中获取
+    if (!newNode && typeof id === 'object') {
+      newNode = id
+      id = newNode.id
+    }
+
+    const newNodes = nodes.value.map((node) => (node.id === id ? newNode : node))
+    setNodes(newNodes) // 记录节点更新操作
+  }
   const setPage = (newPage: PageSchema) => Object.assign(page.value, newPage) // 记录页面更新操作
 
   /**

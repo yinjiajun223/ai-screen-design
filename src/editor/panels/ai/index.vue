@@ -45,6 +45,8 @@ import { storeToRefs } from 'pinia'
 import { useEditorStore } from '@/stores/editor'
 import { getAllMaterialSchemas } from '@/materials'
 import { CanvasSchema } from '@/editor/schema/common'
+import { ActionTypeEnum } from '@/schema/page'
+import { deepClone } from '@/utils'
 
 defineOptions({
   name: 'AiPanel',
@@ -145,18 +147,21 @@ onBeforeUnmount(() => {
 //   console.log('value', value)
 // })
 
-watch(
-  () => values.value.action,
-  (action: any) => {
-    if (!action) return
-    if (action?.type === 'add_node') {
-      const { node } = action
+const methodMap = {
+  [ActionTypeEnum.ADD_NODE]: editorStore.addNode,
+  [ActionTypeEnum.UPDATE_NODE]: editorStore.updateNode,
+  [ActionTypeEnum.REMOVE_NODE]: editorStore.removeNode,
+}
 
+watch(
+  () => values.value.actions,
+  (actions: any) => {
+    if (!actions.length) return
+
+    for (const action of actions) {
       // toRaw 的原因是调整样式报错属性是 readonly 的 使用 toRaw 可以将其转换为普通对象
-      editorStore.addNode(toRaw(node))
-    } else if (action?.type === 'update_node') {
-      const { node } = action
-      editorStore.updateNode(node.id, toRaw(node))
+      const node = deepClone(toRaw(action.node))
+      methodMap[action.type]?.(node)
     }
   },
 )
