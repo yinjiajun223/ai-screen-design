@@ -30,7 +30,7 @@ const option = computed(() => {
     dataset: {
       ..._option.dataset,
       // 重写source，优先使用数据源中的数据，如果没有则使用组件自带的source
-      source: data.value ?? _option.dataset.source,
+      source: data.value ?? _option.dataset?.source,
     },
   }
 })

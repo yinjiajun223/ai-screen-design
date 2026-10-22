@@ -47,6 +47,7 @@ import { getAllMaterialSchemas } from '@/materials'
 import { CanvasSchema } from '@/editor/schema/common'
 import { ActionTypeEnum } from '@/schema/page'
 import { deepClone } from '@/utils'
+import { toJsonSchema } from '@/utils/agent-schema'
 
 defineOptions({
   name: 'AiPanel',
@@ -86,7 +87,7 @@ const onSubmit = async () => {
     selectedNodeIds: selectedNodeIds.value,
     schema: {
       material: getAllMaterialSchemas(),
-      canvas: CanvasSchema.toJSONSchema(),
+      canvas: toJsonSchema(CanvasSchema),
     },
   })
 

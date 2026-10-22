@@ -1,5 +1,6 @@
 import type { Component } from 'vue'
 import type { MaterialSchema, MaterialsDefinition } from '../schema/materials'
+import { toJsonSchema } from '@/utils/agent-schema'
 
 const materials: MaterialsDefinition[] = []
 
@@ -27,7 +28,7 @@ export const getAllMaterialSchemas = () => {
     return {
       type: material.schema.type,
       name: material.name,
-      configSchema: material.configSchema.toJSONSchema(),
+      configSchema: toJsonSchema(material.configSchema),
     }
   })
 }
