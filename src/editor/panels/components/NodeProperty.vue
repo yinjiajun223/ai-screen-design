@@ -3,7 +3,9 @@
     <div class="node-title">
       <span>{{ selectedNode.name }}</span>
       <div class="flex gap-x-20">
-        <span class="cursor-pointer" @click="eventVisible = true" title="编辑事件"> <Icon icon="material-symbols:event-note-outline" /></span>
+        <span class="cursor-pointer" @click="eventVisible = true" title="编辑事件">
+          <Icon icon="material-symbols:event-note-outline"
+        /></span>
         <span class="cursor-pointer" @click="previewJson" title="编辑 JSON"> <Icon icon="si:json-duotone" /></span>
       </div>
     </div>
