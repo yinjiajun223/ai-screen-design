@@ -52,8 +52,8 @@ export const ChartOptionSchema = z
     tooltip: JsonObjectSchema.optional().describe('ECharts 提示框配置'),
     dataset: ChartDatasetSchema.optional(),
     grid: ChartGridSchema.optional(),
-    xAxis: JsonObjectSchema.optional().describe('ECharts X 轴配置'),
-    yAxis: JsonObjectSchema.optional().describe('ECharts Y 轴配置'),
+    xAxis: JsonObjectSchema.describe('ECharts X 轴配置'),
+    yAxis: JsonObjectSchema.describe('ECharts Y 轴配置'),
     series: z.array(JsonObjectSchema).min(1).describe('ECharts 系列列表，包含真实 type、encode 和样式'),
   })
   .describe('当前图表物料使用的 ECharts Option')
