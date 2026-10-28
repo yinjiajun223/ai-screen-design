@@ -36,6 +36,10 @@
           </el-radio-group>
         </el-form-item>
 
+        <el-form-item label="数据描述">
+          <el-input type="textarea" v-model="activeSource.dataDescription"></el-input>
+        </el-form-item>
+
         <el-form-item label="数据" v-if="activeSource.type === 'static'">
           <MonacoEditor v-model="activeSource.data" />
         </el-form-item>
@@ -123,6 +127,7 @@ const onAdd = () => {
     name: '未命名',
     type: 'static',
     data: '',
+    dataDescription: '',
     params: '{}',
   })
 

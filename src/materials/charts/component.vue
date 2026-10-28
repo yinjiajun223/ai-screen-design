@@ -58,7 +58,7 @@ defineExpose({
 watch(
   option,
   (option) => {
-    chart.setOption(option)
+    chart.setOption(option, true)
   },
   { deep: true },
 )

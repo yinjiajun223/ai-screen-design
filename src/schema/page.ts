@@ -29,6 +29,7 @@ export interface DataSourceSchema {
   responsePath?: string // api 响应数据的路径
   interval?: number // api 轮询的间隔时间，单位为毫秒
   params?: Record<string, any> // api 请求的参数
+  dataDescription: string // data字段/数据源的描述信息，主要用于提示用户数据源的结构和字段含义
 }
 
 export enum ActionTypeEnum {

@@ -7,7 +7,14 @@ export const pieMaterial: MaterialsDefinition = {
   group: 'charts',
   icon: 'streamline-stickies-color:graph-pie',
   eventOptions: commonEventOptions,
-  configSchema: PieChartSchema,
+  configSchema: PieChartSchema.extend({
+    props: PieChartSchema.shape.props.extend({
+      option: PieChartSchema.shape.props.shape.option.omit({
+        xAxis: true,
+        yAxis: true,
+      }),
+    }), // 饼图不需要 xAxis 和 yAxis
+  }),
   setters: [
     {
       type: 'input',

@@ -1,3 +1,5 @@
+import { get, set } from 'lodash-es'
+
 export const debounce = (fn: Function, delay: number) => {
   let timer: number | null = null
   return function (this: any, ...args: any[]) {
@@ -15,14 +17,17 @@ export const debounce = (fn: Function, delay: number) => {
  * getValue(obj, 'style.fontSize') => undefined
  */
 export const getValue = (target: Record<string, any>, key: string) => {
-  if (!target || !key) return target
+  return get(target, key)
 
-  const keys = key.split('.')
-  while (keys.length) {
-    const key = keys.shift()
-    target = target[key as string]
-  }
-  return target
+  // if (!target || !key) return target
+
+  // const keys = key.split('.')
+
+  // while (keys.length) {
+  //   const key = keys.shift()
+  //   target = target?.[key as string]
+  // }
+  // return target
 }
 
 /**
@@ -31,12 +36,13 @@ export const getValue = (target: Record<string, any>, key: string) => {
  * setValue(obj, 'style.fontSize', '16px')
  */
 export const setValue = (target: Record<string, any>, key: string, value: any) => {
-  const keys = key.split('.')
-  const lastKey = keys.pop()
-  if (keys.length) {
-    target = getValue(target, keys.join('.'))
-  }
-  target[lastKey as string] = value
+  return set(target, key, value)
+  // const keys = key.split('.')
+  // const lastKey = keys.pop()
+  // if (keys.length) {
+  //   target = getValue(target, keys.join('.'))
+  // }
+  // target[lastKey as string] = value
 }
 
 export const deepClone = <T>(value: T): T => {

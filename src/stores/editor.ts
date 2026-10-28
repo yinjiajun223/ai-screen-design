@@ -24,6 +24,8 @@ export const useEditorStore = defineStore('editor', () => {
         type: 'static',
         id: '123',
         name: '销售数据源',
+        dataDescription:
+          'data 是对象数组，label 是表示月份的 string 字段，value 是表示销售额的 number 字段，每一个对象表示一条销售数据。',
         data: [
           { label: '一月', value: 2000 },
           { label: '二月', value: 8000 },
@@ -34,6 +36,8 @@ export const useEditorStore = defineStore('editor', () => {
         type: 'static',
         id: '456',
         name: '访问数据源',
+        dataDescription:
+          'data 是对象数组，label 是表示月份的 string 字段，value 是表示访问量的 number 字段，每一个对象表示一条访问数据。',
         data: [
           { label: '周一', value: 1000 },
           { label: '周二', value: 2000 },
@@ -44,6 +48,8 @@ export const useEditorStore = defineStore('editor', () => {
         type: 'api',
         id: '567',
         name: '上升趋势',
+        dataDescription:
+          'data 是对象数组，label 是表示月份的 string 字段，value 是表示访问量的 number 字段，每一个对象表示一条上升趋势数据。',
         // interval: 2000,
         data: [],
         params: {
