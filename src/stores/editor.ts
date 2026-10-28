@@ -78,6 +78,20 @@ export const useEditorStore = defineStore('editor', () => {
     const newNodes = nodes.value.map((node) => (node.id === id ? newNode : node))
     setNodes(newNodes) // 记录节点更新操作
   }
+  const addDataSource = (dataSource: PageSchema['dataSources'][number]) => {
+    const newDataSources = [...dataSources.value, dataSource]
+    applyChange(dataSources, 'value', newDataSources) // 记录数据源添加操作
+  }
+  const updateDataSource = (dataSource: PageSchema['dataSources'][number]) => {
+    if (!dataSources.value.some((item) => item.id === dataSource.id)) {
+      throw new Error(`数据源不存在：${dataSource.id}`)
+    }
+    applyChange(
+      dataSources,
+      'value',
+      dataSources.value.map((item) => (item.id === dataSource.id ? dataSource : item)),
+    )
+  }
   const setPage = (newPage: PageSchema) => Object.assign(page.value, newPage) // 记录页面更新操作
 
   /**
@@ -141,5 +155,7 @@ export const useEditorStore = defineStore('editor', () => {
     moveBottom,
     toggleLock,
     updateNode,
+    addDataSource,
+    updateDataSource,
   }
 })

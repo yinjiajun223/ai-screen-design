@@ -35,4 +35,6 @@ export enum ActionTypeEnum {
   ADD_NODE = 'add_node',
   REMOVE_NODE = 'remove_node',
   UPDATE_NODE = 'update_node',
+  ADD_DATA_SOURCE = 'add_data_source',
+  UPDATE_DATA_SOURCE = 'update_data_source',
 }

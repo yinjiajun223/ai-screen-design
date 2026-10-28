@@ -44,7 +44,7 @@ import { clearThreadId, getThreadId, setThreadId } from './thread-storage'
 import { storeToRefs } from 'pinia'
 import { useEditorStore } from '@/stores/editor'
 import { getAllMaterialSchemas } from '@/materials'
-import { CanvasSchema } from '@/editor/schema/common'
+import { CanvasSchema, DataSourceSchema } from '@/editor/schema/common'
 import { ActionTypeEnum } from '@/schema/page'
 import { deepClone } from '@/utils'
 import { toJsonSchema } from '@/utils/agent-schema'
@@ -85,9 +85,11 @@ const onSubmit = async () => {
     messages: [{ type: 'human', content: message.value }],
     page: page.value,
     selectedNodeIds: selectedNodeIds.value,
+    dataSources: editorStore.dataSources,
     schema: {
       material: getAllMaterialSchemas(),
       canvas: toJsonSchema(CanvasSchema),
+      dataSource: toJsonSchema(DataSourceSchema),
     },
   })
 
@@ -152,6 +154,8 @@ const methodMap = {
   [ActionTypeEnum.ADD_NODE]: editorStore.addNode,
   [ActionTypeEnum.UPDATE_NODE]: editorStore.updateNode,
   [ActionTypeEnum.REMOVE_NODE]: editorStore.removeNode,
+  [ActionTypeEnum.ADD_DATA_SOURCE]: editorStore.addDataSource,
+  [ActionTypeEnum.UPDATE_DATA_SOURCE]: editorStore.updateDataSource,
 }
 
 watch(
